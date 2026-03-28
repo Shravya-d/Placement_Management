@@ -39,10 +39,10 @@ exports.getEligibleCompanies = catchAsync(async (req, res, next) => {
     }
 
 
-    const dept = await PlacementDept.findOne();
-    
+    dept = await PlacementDept.findOne();
+
     // Fix: ObjectId strict equality bug bypassing filter
-    const eligibleCompanies = dept ? dept.companies.filter(c => 
+    const eligibleCompanies = dept ? dept.companies.filter(c =>
         student.eligibleCompanies.some(id => id.toString() === c._id.toString())
     ) : [];
 
