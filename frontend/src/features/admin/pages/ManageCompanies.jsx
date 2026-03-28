@@ -15,12 +15,12 @@ const companySchema = z.object({
   companyName: z.string().min(2, "Name required"),
   role: z.string().min(2, "Role required"),
   jdSkills: z.string().min(1, "Skills required").transform(v => v.split(',').map(s=>s.trim()).filter(Boolean)),
-  cgpaCriteria: z.coerce.number().min(0).max(10).optional(),
+  cgpaCriteria: z.preprocess(v => v === '' ? undefined : Number(v), z.number().min(0).max(10).optional()),
   backlog: z.boolean().default(false),
   branchesAllowed: z.string().min(1, "Branches required").transform(v => v.split(',').map(s=>s.trim()).filter(Boolean)),
-  numberOfCandidates: z.coerce.number().min(1, "Required").optional(),
+  numberOfCandidates: z.preprocess(v => v === '' ? undefined : Number(v), z.number().min(1, "Required").optional()),
   visitDate: z.string().min(1, "Visit date required"),
-  applicationDeadline: z.string().min(1, "Deadline required"),
+  applicationDeadline: z.string().min(1, "Deadline required").refine(date => new Date(date).getTime() > Date.now(), { message: "Must be a future date" }),
   description: z.string().min(10, "Description too short")
 });
 

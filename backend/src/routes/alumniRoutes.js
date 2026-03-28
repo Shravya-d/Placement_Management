@@ -11,5 +11,6 @@ router.use(role.restrictTo('alumni'));
 
 router.post('/feedback', alumniController.addFeedback);
 router.get('/network', alumniController.viewAlumniContactDetails);
+router.patch('/profile', alumniController.updateProfile);
 
 module.exports = router;

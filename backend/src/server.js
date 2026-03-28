@@ -1,9 +1,13 @@
 require('dotenv').config();
 const app = require('./app');
 const connectDB = require('./config/db');
+const cronService = require('./services/cronService');
 
 // Connect to Database
 connectDB();
+
+// Init Background Cron Jobs
+cronService.initCronJobs();
 
 const PORT = process.env.PORT || 5000;
 

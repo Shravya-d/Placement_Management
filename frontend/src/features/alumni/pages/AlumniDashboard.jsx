@@ -1,13 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuthStore } from '../../auth/store/authStore';
-import { Briefcase, Building2, Quote, Users } from 'lucide-react';
+import { Briefcase, Building2, Quote, Users, X, Star, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { usePostFeedback } from '../hooks/useAlumniHooks';
+import { cn } from '../../../shared/utils/cn';
 
 const AlumniDashboard = () => {
   const { user } = useAuthStore();
+  const [showModal, setShowModal] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [message, setMessage] = useState('');
+  
+  const { mutate: postFeedback, isPending } = usePostFeedback();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!message.trim()) return;
+    
+    postFeedback({ message, rating }, {
+      onSuccess: () => {
+        setShowModal(false);
+        setMessage('');
+        setRating(5);
+      }
+    });
+  };
 
   return (
-    <div className="space-y-8 mt-10">
+
+    <div className="space-y-8 relative">
+
       <div className="flex flex-col space-y-2">
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-light flex items-center">
           Welcome back, {user?.studentData?.name || user?.name || 'Alumnus'}
@@ -33,16 +56,19 @@ const AlumniDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
          <Link to="/alumni/network" className="glass-card p-6 flex items-center justify-between group cursor-pointer hover:bg-light/5 border-brand-violet/20 shadow-sm hover:shadow-glow interactive">
             <div>
-              <h4 className="text-lg font-bold text-brand-violet mb-2">My Network</h4>
-              <p className="text-sm text-neutral-500">Connect with other placed peers.</p>
+
+              <h4 className="text-lg font-bold text-accent-primary mb-2">My Network</h4>
+              <p className="text-sm text-text-muted">Connect with peers mapped to {user?.companyJoined || 'your company'}.</p>
+
             </div>
             <div className="w-12 h-12 rounded-full bg-brand-violet/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-brand-violet/30 transition-all">
                <Users className="w-6 h-6 text-brand-violet" />
             </div>
          </Link>
 
-         {/* Placeholder link to feedback modal/page */}
-         <button className="glass-card p-6 flex items-center justify-between group cursor-pointer hover:bg-light/5 border-emerald-500/20 shadow-sm hover:shadow-glow text-left w-full interactive">
+
+         <button onClick={() => setShowModal(true)} className="glass-card p-6 flex items-center justify-between group cursor-pointer hover:bg-white/5 transition-colors border-emerald-500/20 shadow-[0_4px_20px_rgba(16,185,129,0.05)] text-left w-full focus:outline-none">
+
             <div>
               <h4 className="text-lg font-bold text-emerald-400 mb-2">Give Feedback</h4>
               <p className="text-sm text-neutral-500">Review {user?.companyJoined || 'your company'} for juniors.</p>
@@ -52,6 +78,74 @@ const AlumniDashboard = () => {
             </div>
          </button>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => !isPending && setShowModal(false)} />
+          <div className="relative w-full max-w-lg glass-card p-8 border border-white/10 shadow-2xl animate-fade-in">
+            <button 
+              onClick={() => setShowModal(false)}
+              disabled={isPending}
+              className="absolute top-4 right-4 text-text-muted hover:text-white transition-colors disabled:opacity-50"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-white mb-2">Review Your Experience</h2>
+              <p className="text-text-muted text-sm">Post feedback securely about your time at <span className="text-accent-alumni font-bold">{user?.companyJoined}</span>. This review guides future candidates.</p>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-text-muted block">Interview / Work Rating</label>
+                <div className="flex items-center space-x-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onMouseEnter={() => setHoveredRating(star)}
+                      onMouseLeave={() => setHoveredRating(0)}
+                      onClick={() => setRating(star)}
+                      disabled={isPending}
+                      className="focus:outline-none disabled:opacity-50 transition-transform hover:scale-110"
+                    >
+                      <Star 
+                        className={cn(
+                          "w-8 h-8 transition-colors", 
+                          (hoveredRating ? star <= hoveredRating : star <= rating) 
+                            ? "fill-amber-400 text-amber-400" 
+                            : "text-white/10 fill-surface"
+                        )} 
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-text-muted block">Your Feedback</label>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  disabled={isPending}
+                  placeholder="Share tips about the interview process, company culture, or specific skills they looked for..."
+                  className="w-full h-32 bg-background/50 border border-white/10 rounded-xl p-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-accent-alumni/50 focus:border-transparent resize-none disabled:opacity-50 transition-all font-mono text-sm"
+                  required
+                />
+              </div>
+              
+              <button
+                type="submit"
+                disabled={isPending || !message.trim()}
+                className="w-full h-12 rounded-xl bg-accent-alumni text-white font-bold hover:bg-emerald-500 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]"
+              >
+                {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <span>Submit Feedback</span>}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

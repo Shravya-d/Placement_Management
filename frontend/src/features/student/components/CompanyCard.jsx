@@ -8,9 +8,11 @@ import { useApplyToCompany } from '../hooks/useApplyToCompany';
 const CompanyCard = ({ company, onClickFeedback }) => {
   const { user } = useAuthStore();
   const { mutate: apply, isPending } = useApplyToCompany();
-  
-  // The backend matching algorithm explicitly guarantees eligibility before sending the card.
-  const isEligible = true;
+
+  const userSkills = user?.skills?.map(s => s.toLowerCase()) || [];
+  const hasRequiredSkill = company.jdSkills?.some(skill => userSkills.includes(skill.toLowerCase()));
+  const isEligible = user?.cgpa >= company.cgpaCriteria && hasRequiredSkill;
+
 
   const handleApply = () => { apply(company._id); };
 

@@ -9,6 +9,14 @@ export const adminApi = {
     const res = await axiosInstance.post(`/placement/companies/${companyId}/select`, { studentIds });
     return res.data;
   },
+  rejectStudents: async ({ companyId, studentIds }) => {
+    const res = await axiosInstance.post(`/placement/companies/${companyId}/reject`, { studentIds });
+    return res.data;
+  },
+  getCompanyApplicants: async () => {
+    const res = await axiosInstance.get('/placement/companies/applicants');
+    return res.data;
+  },
   getCompanyHistory: async () => {
     const res = await axiosInstance.get('/placement/company-history');
     return res.data;

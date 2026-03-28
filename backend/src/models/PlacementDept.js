@@ -59,6 +59,14 @@ const companySchema = new mongoose.Schema({
         required: false
     },
     visitDate: Date,
+    applicationDeadline: {
+        type: Date,
+        required: function() { return this.isNew; }
+    },
+    alertTriggered: {
+        type: Boolean,
+        default: false
+    },
     description: String,
     applicants: [applicantSchema],
     selectedStudents: [{
