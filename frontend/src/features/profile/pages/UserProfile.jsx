@@ -11,16 +11,16 @@ import { toast } from 'sonner';
 // Simplified CustomInput component for Profile usage
 const CustomInput = ({ label, register, name, error, icon: Icon, disabled, type = "text", ...rest }) => (
   <div className="flex flex-col mb-4">
-    <label className="text-sm font-semibold text-text-secondary mb-1">{label}</label>
+    <label className="text-sm font-semibold text-neutral-300 mb-1">{label}</label>
     <div className="relative">
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Icon className="h-5 w-5 text-text-muted" />
+        <Icon className="h-5 w-5 text-neutral-500" />
       </div>
       <input
         type={type}
         {...register(name)}
         disabled={disabled}
-        className={`block w-full pl-10 pr-3 py-2 border border-border rounded-lg bg-surface text-white placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-accent-primary transition-all ${disabled ? 'opacity-50 cursor-not-allowed hidden-bg' : ''}`}
+        className={`block w-full pl-10 pr-4 py-3 border border-neutral-700/50 rounded-2xl bg-light/5 text-light placeholder:text-neutral-500 focus:outline-none focus:border-brand-violet focus:ring-1 focus:ring-brand-violet/50 backdrop-blur-sm transition-all duration-300 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-neutral-500'}`}
         {...rest}
       />
     </div>
@@ -81,16 +81,16 @@ const UserProfile = () => {
 
   return (
     <div className="max-w-3xl mx-auto py-8 lg:py-12 px-4 sm:px-6">
-      <div className="glass-card overflow-hidden shadow-[0_0_40px_rgba(99,102,241,0.1)] border-t border-t-white/10">
-        <div className="bg-gradient-to-r from-accent-primary to-indigo-600 px-8 py-8 flex items-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="glass-card overflow-hidden shadow-card border-t border-t-neutral-700/50">
+        <div className="bg-gradient-to-r from-brand-violet to-brand-iris px-8 py-8 flex items-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-light/10 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/40 shadow-xl backdrop-blur-md shrink-0 relative z-10">
-             <UserCheck className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 rounded-full bg-light/10 flex items-center justify-center border border-light/20 shadow-xl backdrop-blur-md shrink-0 relative z-10">
+             <UserCheck className="w-10 h-10 text-light" />
           </div>
           <div className="ml-6 relative z-10">
-            <h1 className="text-3xl font-bold text-white tracking-tight">Profile Settings</h1>
-            <p className="text-indigo-100 mt-1.5 text-sm font-semibold tracking-wider">
+            <h1 className="text-3xl font-bold text-light tracking-tight">Profile Settings</h1>
+            <p className="text-brand-mist/80 mt-1.5 text-sm font-semibold tracking-wider">
                {role ? role.toUpperCase() : 'USER'} ACCOUNT
             </p>
           </div>
@@ -123,11 +123,11 @@ const UserProfile = () => {
             </div>
           )}
 
-          <div className="pt-8 mt-8 border-t border-white/10 flex justify-end">
+          <div className="pt-8 mt-8 border-t border-neutral-700/50 flex justify-end">
             <button 
               type="submit" 
               disabled={isPending}
-              className="px-8 py-3 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-xl font-bold shadow-lg shadow-accent-primary/25 transition-all flex items-center transform active:scale-95"
+              className="btn-primary interactive"
             >
               {isPending ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
               {isPending ? 'Saving Details...' : 'Save Profile Details'}

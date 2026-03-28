@@ -103,6 +103,77 @@ exports.selectStudents = catchAsync(async (req, res, next) => {
     });
 });
 
+exports.getActiveDrives = catchAsync(async (req, res, next) => {
+    // We want to return companies that have applicants but perhaps aren't fully finalized
+    // We can just return all companies and let the frontend filter, or return ones from the last year
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const dept = await PlacementDept.findOne()
+        .populate({
+            path: 'companies.applicants.studentId',
+            select: 'name usn email branch cgpa skills resume'
+        });
+
+    if (!dept) return next(new AppError('Dept not configured', 500));
+
+    const activeDrives = await Promise.all(dept.companies.map(async c => {
+        // Fetch Alumni placed in this exact company and role
+        const placedAlumni = await Alumni.find({ 
+            companyJoined: c.companyName, 
+            role: c.role 
+        });
+
+        const alumniApplicants = placedAlumni.map(al => ({
+            _id: al._id, 
+            studentId: al._id, 
+            name: al.studentData.name,
+            usn: al.studentData.usn,
+            email: al.studentData.email,
+            branch: al.studentData.branch,
+            cgpa: al.studentData.cgpa,
+            skills: al.studentData.skills,
+            resume: al.studentData.resume,
+            matchedSkillsCount: 'Placed',
+            status: 'PLACED',
+            appliedAt: al.placedDate
+        }));
+
+        const activeApplicants = c.applicants.filter(a => a.studentId != null).map(a => ({
+            _id: a._id,
+            studentId: a.studentId._id,
+            name: a.studentId.name,
+            usn: a.studentId.usn,
+            email: a.studentId.email,
+            branch: a.studentId.branch,
+            cgpa: a.studentId.cgpa,
+            skills: a.studentId.skills,
+            resume: a.studentId.resume,
+            matchedSkillsCount: a.matchedSkillsCount,
+            status: a.status,
+            appliedAt: a.appliedAt
+        }));
+
+        return {
+            _id: c._id,
+            companyName: c.companyName,
+            role: c.role,
+            visitDate: c.visitDate,
+            numberOfCandidates: c.numberOfCandidates,
+            applicants: [...activeApplicants, ...alumniApplicants],
+            selectedStudents: c.selectedStudents || []
+        };
+    }));
+
+    res.status(200).json({
+        status: 'success',
+        results: activeDrives.length,
+        data: {
+            drives: activeDrives
+        }
+    });
+});
+
 exports.getCompanyHistory = catchAsync(async (req, res, next) => {
     // Last 3 years
     const threeYearsAgo = new Date();

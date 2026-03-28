@@ -50,6 +50,7 @@ exports.registerStudent = catchAsync(async (req, res, next) => {
     });
 
     const matchingService = require('../services/matchingService');
+
     await matchingService.evaluateStudentForExistingCompanies(newStudent);
 
     await emailService.sendRegistrationEmail(newStudent);

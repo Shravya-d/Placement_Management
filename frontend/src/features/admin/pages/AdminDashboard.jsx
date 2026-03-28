@@ -62,27 +62,27 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      <div className="flex justify-between items-end">
+      <div className="flex justify-between items-end mt-10">
         <div className="space-y-2">
-           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white font-inter">Placement Analytics</h1>
-           <p className="text-text-secondary w-full max-w-xl">Overview of placement performance and recent company activities.</p>
+           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-light font-inter">Placement Analytics</h1>
+           <p className="text-neutral-300 w-full max-w-xl">Overview of placement performance and recent company activities.</p>
         </div>
-        <Link to="/admin/companies" className="hidden md:flex items-center space-x-2 bg-gradient-to-r from-accent-admin to-amber-600 text-white px-5 py-2.5 rounded-xl font-medium shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transition-all">
+        <Link to="/admin/companies" className="hidden md:flex items-center space-x-2 bg-gradient-to-r from-accent-gold to-accent-red text-light px-6 py-3 rounded-2xl font-bold shadow-card hover:shadow-glow interactive">
           <Plus className="w-5 h-5" />
           <span>Add Company</span>
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard title="Total Students" value={totalStudents} icon={Users} colorClass="bg-accent-primary" delay={0.1} />
-        <KPICard title="Companies Visited" value={companiesAdded} icon={Building2} colorClass="bg-accent-admin" delay={0.2} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+        <KPICard title="Total Students" value={totalStudents} icon={Users} colorClass="bg-brand-violet" delay={0.1} />
+        <KPICard title="Companies Visited" value={companiesAdded} icon={Building2} colorClass="bg-accent-gold" delay={0.2} />
         <KPICard title="Students Placed" value={studentsPlaced} icon={UserCheck} colorClass="bg-emerald-500" delay={0.3} />
         <KPICard title="Placement Rate" value={`${placementRate}%`} icon={Percent} colorClass="bg-indigo-500" delay={0.4} />
       </div>
 
-      <div ref={chartsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="chart-container glass-card p-6 h-96">
-          <h3 className="text-lg font-bold text-white mb-6">Top Recruiting Companies</h3>
+      <div ref={chartsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10">
+        <div className="chart-container glass-card p-6 h-96 interactive">
+          <h3 className="text-lg font-bold text-light mb-6">Top Recruiting Companies</h3>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={barData} margin={{ top: 5, right: 30, left: 20, bottom: 25 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E2633" vertical={false} />
@@ -94,8 +94,8 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="chart-container glass-card p-6 h-96">
-          <h3 className="text-lg font-bold text-white mb-6">Department Placement Spread</h3>
+        <div className="chart-container glass-card p-6 h-96 interactive">
+          <h3 className="text-lg font-bold text-light mb-6">Department Placement Spread</h3>
           <ResponsiveContainer width="100%" height="80%">
             <PieChart>
               <Pie data={pieData} cx="50%" cy="50%" innerRadius={80} outerRadius={110} paddingAngle={5} dataKey="value" stroke="none" animationBegin={500} animationDuration={1200} animationEasing="ease-out">

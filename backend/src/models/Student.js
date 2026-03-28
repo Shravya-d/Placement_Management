@@ -45,7 +45,10 @@ const studentSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    skills: [String],
+    skills: [{
+        type: String,
+        required: true
+    }],
     backlogs: {
         type: Boolean,
         default: false
@@ -67,14 +70,14 @@ const studentSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Pre-save middleware to hash password
-studentSchema.pre('save', async function(next) {
+studentSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 12);
     next();
 });
 
 // Method to verify password
-studentSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
+studentSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword);
 };
 

@@ -37,11 +37,12 @@ exports.matchStudentsToCompany = async (company) => {
             }
         });
 
+
         // Add to eligible list only if matches > 0 (MUST have at least one required skill)
         if (matchedSkillsCount === 0) return;
 
 
-        // Push anyway if eligible by criteria, but sort by match count
+
         eligibleStudents.push({
             student,
             matchedSkillsCount
@@ -68,10 +69,13 @@ exports.matchStudentsToCompany = async (company) => {
     }
 };
 
+
 exports.evaluateStudentForExistingCompanies = async (student) => {
+
     const PlacementDept = require('../models/PlacementDept');
     const dept = await PlacementDept.findOne();
     if (!dept) return;
+
 
     // We want to replace the student's eligible array with the freshly evaluated list
     const newEligibleCompanies = [];
@@ -82,6 +86,7 @@ exports.evaluateStudentForExistingCompanies = async (student) => {
         if (company.applicationDeadline && Date.now() > new Date(company.applicationDeadline).getTime()) {
             continue;
         }
+
 
         if (company.cgpaCriteria !== undefined && company.cgpaCriteria !== null) {
             if (student.cgpa < company.cgpaCriteria) continue;
@@ -96,12 +101,14 @@ exports.evaluateStudentForExistingCompanies = async (student) => {
             if (!branchesAllowedLC.includes((student.branch || '').toLowerCase())) continue;
         }
 
+
         let matchedSkillsCount = 0;
         company.jdSkills.forEach(skill => {
             if (studentSkills.has(skill.toLowerCase())) {
                 matchedSkillsCount++;
             }
         });
+
 
         if (matchedSkillsCount === 0) continue;
 
@@ -114,4 +121,5 @@ exports.evaluateStudentForExistingCompanies = async (student) => {
         student.eligibleCompanies = newEligibleCompanies;
         await student.save({ validateBeforeSave: false });
     }
+
 };

@@ -21,6 +21,10 @@ export const adminApi = {
     const res = await axiosInstance.get('/placement/company-history');
     return res.data;
   },
+  getActiveDrives: async () => {
+    const res = await axiosInstance.get('/placement/active-drives');
+    return res.data;
+  },
   updateProfile: async (data) => {
     const res = await axiosInstance.patch('/placement/profile', data);
     return res.data;

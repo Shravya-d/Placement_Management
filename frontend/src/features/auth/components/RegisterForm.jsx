@@ -43,12 +43,12 @@ const CustomInput = ({ label, icon: Icon, error, register, name, ...props }) => 
         {...register(name)}
         {...props}
         className={cn(
-          "w-full bg-white/5 border rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/20",
+          "w-full bg-light/5 border rounded-2xl pl-10 pr-4 py-2.5 text-sm text-light placeholder:text-light/20",
           "transition-all duration-300 backdrop-blur-sm",
-          "focus:bg-white/10 focus:outline-none focus:shadow-[0_0_15px_rgba(99,102,241,0.2)]",
+          "focus:bg-light/10 focus:outline-none focus:shadow-glow",
           error 
             ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50" 
-            : "border-white/10 hover:border-white/20 focus:border-accent-primary focus:ring-1 focus:ring-accent-primary/50"
+            : "border-light/10 hover:border-light/20 focus:border-brand-violet focus:ring-1 focus:ring-brand-violet/50"
         )}
       />
     </div>
@@ -134,23 +134,23 @@ const RegisterForm = () => {
         <p className="text-text-muted text-sm">Join the platform to kickstart your career.</p>
       </div>
 
-      <div className="form-element mb-8 ring-1 ring-white/10 bg-white/5 p-1 rounded-xl flex justify-between relative overflow-hidden">
+      <div className="form-element mb-8 ring-1 ring-light/10 bg-light/5 p-1 rounded-2xl flex justify-between relative overflow-hidden">
         {/* Animated toggle background */}
-        <div className={cn("absolute inset-y-1 w-[calc(50%-4px)] rounded-lg transition-all duration-300 ease-in-out", role === 'student' ? 'translate-x-0 bg-accent-primary shadow-[0_0_20px_rgba(99,102,241,0.4)]' : 'translate-x-full bg-accent-admin shadow-[0_0_20px_rgba(245,158,11,0.4)]')} />
+        <div className={cn("absolute inset-y-1 w-[calc(50%-4px)] rounded-xl transition-all duration-300 ease-in-out", role === 'student' ? 'translate-x-0 bg-brand-violet shadow-[0_0_20px_rgba(123,92,240,0.4)]' : 'translate-x-full bg-accent-gold shadow-[0_0_20px_rgba(245,158,11,0.4)]')} />
         
-        <button type="button" onClick={() => { setRole('student'); setStep(1); }} className={cn("relative z-10 w-1/2 py-2 text-sm font-semibold transition-colors", role === 'student' ? "text-white" : "text-text-secondary hover:text-white")}>
+        <button type="button" onClick={() => { setRole('student'); setStep(1); }} className={cn("relative z-10 w-1/2 py-2 text-sm font-semibold transition-colors interactive", role === 'student' ? "text-light" : "text-neutral-300 hover:text-light")}>
           Student
         </button>
-        <button type="button" onClick={() => { setRole('admin'); setStep(1); }} className={cn("relative z-10 w-1/2 py-2 text-sm font-semibold transition-colors", role === 'admin' ? "text-white" : "text-text-secondary hover:text-white")}>
+        <button type="button" onClick={() => { setRole('admin'); setStep(1); }} className={cn("relative z-10 w-1/2 py-2 text-sm font-semibold transition-colors interactive", role === 'admin' ? "text-light" : "text-neutral-300 hover:text-light")}>
           Admin Dept
         </button>
       </div>
 
       {role === 'student' && (
         <div className="form-element flex items-center justify-center space-x-2 mb-6">
-           <div className={cn("w-2 h-2 rounded-full transition-colors", step === 1 ? "bg-accent-primary" : "bg-white/20")} />
-           <div className={cn("w-6 h-0.5 rounded-full transition-colors", step === 2 ? "bg-accent-primary" : "bg-white/20")} />
-           <div className={cn("w-2 h-2 rounded-full transition-colors", step === 2 ? "bg-accent-primary" : "bg-white/20")} />
+           <div className={cn("w-2 h-2 rounded-full transition-colors", step === 1 ? "bg-brand-violet" : "bg-light/20")} />
+           <div className={cn("w-6 h-0.5 rounded-full transition-colors", step === 2 ? "bg-brand-violet" : "bg-light/20")} />
+           <div className={cn("w-2 h-2 rounded-full transition-colors", step === 2 ? "bg-brand-violet" : "bg-light/20")} />
         </div>
       )}
 
@@ -161,17 +161,17 @@ const RegisterForm = () => {
 
         <div className="form-element pt-4 flex space-x-4">
           {step === 2 && (
-            <button type="button" onClick={() => setStep(1)} className="w-[120px] py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white text-sm font-semibold transition-all hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] flex items-center justify-center group">
+            <button type="button" onClick={() => setStep(1)} className="w-[120px] py-3 rounded-2xl bg-light/5 border border-light/10 hover:bg-light/10 text-light text-sm font-semibold transition-all hover:shadow-card flex items-center justify-center group interactive">
               <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" /> Back
             </button>
           )}
 
           {role === 'student' && step === 1 ? (
-             <button type="button" onClick={nextStep} className="flex-1 py-3 rounded-xl bg-white text-background text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all hover:bg-zinc-100 hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] flex items-center justify-center group">
-               Continue <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform text-accent-primary" />
+             <button type="button" onClick={nextStep} className="flex-1 py-3 rounded-2xl bg-light text-void text-sm font-bold shadow-card transition-all hover:bg-light hover:shadow-hover flex items-center justify-center group interactive">
+               Continue <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform text-brand-violet" />
              </button>
           ) : (
-            <button type="submit" disabled={isPending} className={cn("flex-1 py-3 rounded-xl text-white text-sm font-bold shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all flex items-center justify-center hover:scale-[1.02] active:scale-[0.98]", role === 'student' ? 'bg-gradient-to-r from-accent-primary to-indigo-600 hover:shadow-[0_0_25px_rgba(99,102,241,0.5)]' : 'bg-gradient-to-r from-accent-admin to-amber-600 hover:shadow-[0_0_25px_rgba(245,158,11,0.5)]', isPending ? "opacity-80 pointer-events-none" : "")}>
+            <button type="submit" disabled={isPending} className={cn("flex-1 py-3 rounded-2xl text-light text-sm font-bold shadow-card transition-all flex items-center justify-center interactive group", role === 'student' ? 'bg-gradient-to-r from-brand-violet to-brand-iris hover:shadow-glow' : 'bg-gradient-to-r from-accent-gold to-accent-red hover:shadow-[0_0_25px_rgba(245,158,11,0.5)]', isPending ? "opacity-80 pointer-events-none" : "")}>
               {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               {isPending ? 'Processing...' : 'Complete Registration'}
             </button>

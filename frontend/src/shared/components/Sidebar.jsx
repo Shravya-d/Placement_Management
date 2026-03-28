@@ -32,8 +32,8 @@ const Sidebar = ({ role }) => {
   const location = useLocation();
 
   const navItems = roleConfig[role] || [];
-  const accentColor = role === 'admin' ? 'text-accent-admin bg-accent-admin/10' : role === 'alumni' ? 'text-accent-alumni bg-accent-alumni/10' : 'text-accent-primary bg-accent-primary/10';
-  const iconAccent = role === 'admin' ? 'text-accent-admin' : role === 'alumni' ? 'text-accent-alumni' : 'text-accent-primary';
+  const accentColor = role === 'admin' ? 'text-accent-gold bg-accent-gold/10' : role === 'alumni' ? 'text-accent-teal bg-accent-teal/10' : 'text-brand-violet bg-brand-violet/10';
+  const iconAccent = role === 'admin' ? 'text-accent-gold' : role === 'alumni' ? 'text-accent-teal' : 'text-brand-violet';
 
   useEffect(() => {
     if (sidebarRef.current) {
@@ -57,16 +57,16 @@ const Sidebar = ({ role }) => {
       {/* Desktop Sidebar */}
       <aside 
         ref={sidebarRef}
-        className="hidden md:flex flex-col h-screen fixed top-0 left-0 bg-surface border-r border-border z-40 overflow-hidden shrink-0"
+        className="hidden md:flex flex-col h-screen fixed top-0 left-0 bg-surface border-r border-neutral-700/50 z-40 overflow-hidden shrink-0"
         style={{ width: "260px" }}
       >
         <div className="p-6 flex items-center mb-8 shrink-0">
-          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shrink-0", 
-            role === 'admin' ? 'bg-accent-admin' : role === 'alumni' ? 'bg-accent-alumni' : 'bg-accent-primary'
+          <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg shrink-0", 
+            role === 'admin' ? 'bg-accent-gold' : role === 'alumni' ? 'bg-accent-teal' : 'bg-brand-violet'
           )}>
-            <span className="font-bold text-white text-xl">P</span>
+            <span className="font-bold text-light text-xl">P</span>
           </div>
-          <span ref={el => labelsRef.current[0] = el} className="ml-3 text-xl font-bold tracking-tight text-white whitespace-nowrap">
+          <span ref={el => labelsRef.current[0] = el} className="ml-3 text-xl font-bold tracking-tight text-light whitespace-nowrap">
             PlacementSync
           </span>
         </div>
@@ -80,12 +80,12 @@ const Sidebar = ({ role }) => {
                 key={item.path} 
                 to={item.path}
                 className={cn(
-                  "flex items-center px-4 py-3 rounded-xl transition-colors duration-200 w-full group overflow-hidden",
-                  isActive ? accentColor : "text-text-secondary hover:bg-white/5 hover:text-white"
+                  "flex items-center px-4 py-3 rounded-2xl transition-all duration-180 w-full group overflow-hidden interactive",
+                  isActive ? accentColor : "text-neutral-300 hover:bg-light/5 hover:text-light"
                 )}
               >
                 <Icon className={cn("w-5 h-5 shrink-0 transition-transform group-hover:scale-110", isActive ? iconAccent : "")} />
-                <span ref={el => labelsRef.current[i+1] = el} className={cn("ml-4 font-medium whitespace-nowrap", isActive ? 'text-white' : '')}>
+                <span ref={el => labelsRef.current[i+1] = el} className={cn("ml-4 font-medium whitespace-nowrap", isActive ? 'text-light' : '')}>
                   {item.name}
                 </span>
               </NavLink>
@@ -96,7 +96,7 @@ const Sidebar = ({ role }) => {
         <div className="p-4 w-full">
            <button 
              onClick={handleLogout}
-             className="flex items-center px-4 py-3 w-full rounded-xl text-text-secondary hover:bg-rose-500/10 hover:text-rose-500 transition-colors group"
+             className="flex items-center px-4 py-3 w-full rounded-2xl text-neutral-300 hover:bg-accent-red/10 hover:text-accent-red transition-all duration-180 interactive group"
            >
              <LogOut className="w-5 h-5 shrink-0 transition-transform group-hover:-translate-x-1" />
              <span ref={el => labelsRef.current[navItems.length+1] = el} className="ml-4 font-medium whitespace-nowrap">Logout</span>
@@ -105,14 +105,14 @@ const Sidebar = ({ role }) => {
       </aside>
 
       {/* Mobile Bottom Tab Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface border-t border-border z-50 flex items-center justify-around px-2 pb-safe">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface border-t border-neutral-700/50 z-50 flex items-center justify-around px-2 pb-safe">
           {navItems.map((item) => {
              const Icon = item.icon;
              const isActive = location.pathname === item.path || (item.path !== `/${role}` && location.pathname.startsWith(item.path));
              return (
-               <NavLink key={item.path} to={item.path} className="flex flex-col items-center justify-center p-2">
-                 <Icon className={cn("w-5 h-5 mb-1", isActive ? iconAccent : "text-text-muted")} />
-                 <span className={cn("text-[10px] font-medium", isActive ? iconAccent : "text-text-muted")}>{item.name}</span>
+               <NavLink key={item.path} to={item.path} className="flex flex-col items-center justify-center p-2 interactive rounded-xl">
+                 <Icon className={cn("w-5 h-5 mb-1", isActive ? iconAccent : "text-neutral-500")} />
+                 <span className={cn("text-[10px] font-medium", isActive ? iconAccent : "text-neutral-500")}>{item.name}</span>
                </NavLink>
              )
           })}

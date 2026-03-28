@@ -3,9 +3,9 @@ import { cn } from '../../../shared/utils/cn';
 import { gsap } from '../../../animations/gsap.config';
 
 const roles = [
-  { id: 'student', label: 'Student', color: 'bg-accent-primary' },
-  { id: 'admin', label: 'Admin', color: 'bg-accent-admin' },
-  { id: 'alumni', label: 'Alumni', color: 'bg-accent-alumni' }
+  { id: 'student', label: 'Student', color: 'bg-brand-violet' },
+  { id: 'admin', label: 'Admin', color: 'bg-accent-gold' },
+  { id: 'alumni', label: 'Alumni', color: 'bg-accent-teal' }
 ];
 
 const RoleToggle = ({ selectedRole, onChange }) => {
@@ -23,12 +23,12 @@ const RoleToggle = ({ selectedRole, onChange }) => {
   }, [selectedRole]);
 
   return (
-    <div className="relative flex items-center p-1 bg-surface-raised rounded-xl mb-8 isolate overflow-hidden">
+    <div className="relative flex items-center p-1 bg-surface rounded-2xl mb-8 isolate overflow-hidden border border-neutral-700/50">
       <div 
         ref={pillRef}
         className={cn(
-          "absolute top-1 bottom-1 left-1 rounded-lg z-0 w-[calc(33.33%-0.5rem)] shadow-sm",
-          roles.find(r => r.id === selectedRole)?.color || 'bg-accent-primary'
+          "absolute top-1 bottom-1 left-1 rounded-xl z-0 w-[calc(33.33%-0.5rem)] shadow-[0_2px_10px_rgba(0,0,0,0.2)]",
+          roles.find(r => r.id === selectedRole)?.color || 'bg-brand-violet'
         )}
       />
       {roles.map((role) => (
@@ -37,8 +37,8 @@ const RoleToggle = ({ selectedRole, onChange }) => {
           type="button"
           onClick={() => onChange(role.id)}
           className={cn(
-            "flex-1 relative z-10 py-2.5 text-sm font-medium transition-colors duration-200",
-            selectedRole === role.id ? "text-white" : "text-text-muted hover:text-text-primary"
+            "flex-1 relative z-10 py-2.5 text-sm font-medium transition-colors duration-180 interactive",
+            selectedRole === role.id ? "text-light" : "text-neutral-500 hover:text-light"
           )}
         >
           {role.label}

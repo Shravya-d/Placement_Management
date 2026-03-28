@@ -26,11 +26,11 @@ const companySchema = z.object({
 
 const CustomInput = ({ label, icon: Icon, error, register, name, className, ...props }) => (
   <div className={cn("space-y-1", className)}>
-    <label className="text-[10px] font-bold tracking-wider text-text-muted uppercase ml-1 block">{label}</label>
+    <label className="text-[10px] font-bold tracking-wider text-neutral-500 uppercase ml-1 block">{label}</label>
     <div className="relative group">
       {Icon && (
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none top-0 bottom-0">
-          <Icon className={cn("w-4 h-4 transition-colors", error ? "text-rose-500" : "text-text-muted group-focus-within:text-amber-400")} />
+          <Icon className={cn("w-4 h-4 transition-colors", error ? "text-rose-500" : "text-neutral-500 group-focus-within:text-accent-gold")} />
         </div>
       )}
       {props.type === "textarea" ? (
@@ -38,35 +38,35 @@ const CustomInput = ({ label, icon: Icon, error, register, name, className, ...p
           {...register(name)}
           {...props}
           className={cn(
-            "w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20",
+            "w-full bg-light/5 border rounded-2xl px-4 py-3 text-sm text-light placeholder:text-light/20",
             "transition-all duration-300 backdrop-blur-sm resize-none min-h-[100px]",
-            "focus:bg-white/10 focus:outline-none focus:shadow-[0_0_15px_rgba(245,158,11,0.2)]",
+            "focus:bg-light/10 focus:outline-none focus:shadow-[0_0_15px_rgba(245,158,11,0.2)]",
             Icon ? "pl-10" : "",
             error ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50" 
-                  : "border-white/10 hover:border-white/20 focus:border-accent-admin focus:ring-1 focus:ring-accent-admin/50"
+                  : "border-light/10 hover:border-light/20 focus:border-accent-gold focus:ring-1 focus:ring-accent-gold/50"
           )}
         />
       ) : props.type === "checkbox" ? (
-         <div className="flex items-center h-11 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors cursor-pointer" onClick={() => document.getElementById(name).click()}>
+         <div className="flex items-center h-11 px-4 bg-light/5 border border-light/10 rounded-2xl hover:bg-light/10 transition-colors cursor-pointer" onClick={() => document.getElementById(name).click()}>
             <input 
               id={name}
               type="checkbox" 
               {...register(name)}
-              className="w-4 h-4 rounded appearance-none border border-text-muted checked:bg-accent-admin checked:border-accent-admin relative checked:after:content-['✓'] checked:after:absolute checked:after:text-white checked:after:text-xs checked:after:left-[3px] checked:after:-top-[1px] transition-all cursor-pointer"
+              className="w-4 h-4 rounded appearance-none border border-neutral-500 checked:bg-accent-gold checked:border-accent-gold relative checked:after:content-['✓'] checked:after:absolute checked:after:text-light checked:after:text-xs checked:after:left-[3px] checked:after:-top-[1px] transition-all cursor-pointer"
             />
-            <span className="ml-3 text-sm text-white font-medium select-none flex-1">Allow Active Backlogs?</span>
+            <span className="ml-3 text-sm text-light font-medium select-none flex-1">Allow Active Backlogs?</span>
          </div>
       ) : (
         <input
           {...register(name)}
           {...props}
           className={cn(
-            "w-full bg-white/5 border rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20",
+            "w-full bg-light/5 border rounded-2xl px-4 py-2.5 text-sm text-light placeholder:text-light/20",
             "transition-all duration-300 backdrop-blur-sm",
-            "focus:bg-white/10 focus:outline-none focus:shadow-[0_0_15px_rgba(245,158,11,0.2)]",
+            "focus:bg-light/10 focus:outline-none focus:shadow-[0_0_15px_rgba(245,158,11,0.2)]",
             Icon ? "pl-10" : "",
             error ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50" 
-                  : "border-white/10 hover:border-white/20 focus:border-accent-admin focus:ring-1 focus:ring-accent-admin/50"
+                  : "border-light/10 hover:border-light/20 focus:border-accent-gold focus:ring-1 focus:ring-accent-gold/50"
           )}
         />
       )}
@@ -111,14 +111,14 @@ const ManageCompanies = () => {
   };
 
   return (
-    <div className="relative" ref={pageRef}>
+    <div className="relative mt-10" ref={pageRef}>
       <div className="flex items-center space-x-3 mb-8 stagger-item">
-        <div className="p-3 bg-accent-admin/20 rounded-xl border border-accent-admin/30">
-          <Building2 className="w-8 h-8 text-amber-400" />
+        <div className="p-3 bg-accent-gold/10 rounded-2xl border border-accent-gold/20">
+          <Building2 className="w-8 h-8 text-accent-gold" />
         </div>
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Manage Companies</h1>
-          <p className="text-text-muted text-sm mt-1">Orchestrate placement drives and define hiring criteria.</p>
+          <h1 className="text-3xl font-black text-light tracking-tight">Manage Companies</h1>
+          <p className="text-neutral-500 text-sm mt-1">Orchestrate placement drives and define hiring criteria.</p>
         </div>
       </div>
 
@@ -126,52 +126,52 @@ const ManageCompanies = () => {
         
         {/* Left Column: List of Companies */}
         <div className="lg:col-span-5 space-y-4 order-2 lg:order-1 stagger-item">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-text-muted" /> Recent Drives
+          <h3 className="text-lg font-bold text-light mb-4 flex items-center">
+            <Calendar className="w-5 h-5 mr-2 text-neutral-500" /> Recent Drives
           </h3>
           
           <div className="space-y-4 pr-2 max-h-[800px] overflow-y-auto custom-scrollbar">
             {isLoading ? (
-              [1,2,3].map(i => <div key={i} className="h-32 rounded-xl bg-white/5 animate-pulse border border-border" />)
+              [1,2,3].map(i => <div key={i} className="h-32 rounded-2xl bg-light/5 animate-pulse border border-neutral-700/50" />)
             ) : history.length > 0 ? (
               history.sort((a,b) => new Date(b.visitDate) - new Date(a.visitDate)).map((company, idx) => (
-                <div key={idx} className="bg-surface/60 backdrop-blur-md border border-border/60 p-5 rounded-2xl hover:border-accent-admin/50 transition-colors group relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-3 bg-accent-admin/10 rounded-bl-2xl">
-                    <span className="text-xs font-bold text-amber-400">
+                <div key={idx} className="bg-surface border border-neutral-700/50 p-5 rounded-2xl hover:border-accent-gold transition-colors interactive group relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-3 bg-accent-gold/10 rounded-bl-2xl">
+                    <span className="text-xs font-bold text-accent-gold">
                       {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(company.visitDate))}
                     </span>
                   </div>
                   
-                  <h4 className="font-bold text-white text-lg mr-20">{company.companyName}</h4>
+                  <h4 className="font-bold text-light text-lg mr-20">{company.companyName}</h4>
                   
                   <div className="mt-4 grid grid-cols-2 gap-4">
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-text-muted uppercase tracking-wider font-bold">Placed</span>
+                      <span className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold">Placed</span>
                       <div className="flex items-center mt-1">
                         <Users className="w-4 h-4 text-emerald-400 mr-1.5" />
-                        <span className="text-white font-medium">{company.numberOfStudentsPlaced || 0}</span>
+                        <span className="text-light font-medium">{company.numberOfStudentsPlaced || 0}</span>
                       </div>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-text-muted uppercase tracking-wider font-bold">Status</span>
+                      <span className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold">Status</span>
                       <div className="flex items-center mt-1">
                         <CheckCircle2 className="w-4 h-4 text-indigo-400 mr-1.5" />
-                        <span className="text-white font-medium">Completed</span>
+                        <span className="text-light font-medium">Completed</span>
                       </div>
                     </div>
                   </div>
                   
                   {company.feedbacks && company.feedbacks.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-border/50 text-xs text-text-secondary">
+                    <div className="mt-4 pt-4 border-t border-neutral-700/50 text-xs text-neutral-300">
                       {company.feedbacks.length} reviews from placed alumni
                     </div>
                   )}
                 </div>
               ))
             ) : (
-              <div className="glass-card p-8 text-center border-dashed">
-                <Building2 className="w-12 h-12 text-text-muted mx-auto mb-3" />
-                <p className="text-text-secondary font-medium">No drives configured yet.</p>
+              <div className="glass-card p-8 text-center border-dashed border-neutral-700/50">
+                <Building2 className="w-12 h-12 text-neutral-500 mx-auto mb-3" />
+                <p className="text-neutral-300 font-medium">No drives configured yet.</p>
               </div>
             )}
           </div>
@@ -181,16 +181,16 @@ const ManageCompanies = () => {
         <div className="lg:col-span-7 order-1 lg:order-2 stagger-item">
           <div className="relative">
             {/* Ambient Background Glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-accent-admin/30 to-rose-600/30 rounded-[28px] blur-xl opacity-60" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-accent-gold/30 to-accent-red/30 rounded-[28px] blur-xl opacity-60" />
             
-            <div className="relative bg-surface/80 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-[24px] p-8 overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-admin via-amber-400 to-rose-500" />
+            <div className="relative bg-surface border border-neutral-700/50 shadow-card rounded-[24px] p-8 overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-gold via-accent-gold to-accent-red" />
               
               <div className="mb-8">
-                <h2 className="text-2xl font-bold text-white flex items-center">
-                   <Plus className="w-6 h-6 mr-2 text-amber-400" /> Create New Drive
+                <h2 className="text-2xl font-bold text-light flex items-center">
+                   <Plus className="w-6 h-6 mr-2 text-accent-gold" /> Create New Drive
                 </h2>
-                <p className="text-sm text-text-muted mt-1">Configure company requirements and trigger the automated matching algorithm instantly.</p>
+                <p className="text-sm text-neutral-500 mt-1">Configure company requirements and trigger the automated matching instantly.</p>
               </div>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -226,8 +226,8 @@ const ManageCompanies = () => {
                     type="submit"
                     disabled={isPending}
                     className={cn(
-                      "w-full py-4 rounded-xl text-white font-bold shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all flex items-center justify-center hover:scale-[1.01] active:scale-[0.99] group",
-                      "bg-gradient-to-r from-accent-admin to-amber-600 hover:shadow-[0_0_30px_rgba(245,158,11,0.5)]",
+                      "w-full py-4 rounded-2xl text-light font-bold shadow-card flex items-center justify-center interactive group",
+                      "bg-gradient-to-r from-accent-gold to-accent-red hover:shadow-glow",
                       isPending ? "opacity-80 pointer-events-none" : ""
                     )}
                   >
@@ -236,9 +236,9 @@ const ManageCompanies = () => {
                     ) : (
                       <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
                     )}
-                    {isPending ? 'Executing AI Matching Algorithm...' : 'Deploy Placement Drive'}
+                    {isPending ? 'Executing Matching Algorithm...' : 'Deploy Placement Drive'}
                   </button>
-                  <p className="text-center text-[11px] text-text-muted mt-4 font-medium uppercase tracking-wide">
+                  <p className="text-center text-[11px] text-neutral-500 mt-4 font-medium uppercase tracking-wide">
                     Submitting will immediately map eligible students to this drive.
                   </p>
                 </div>

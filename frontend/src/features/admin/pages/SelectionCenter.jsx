@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { useCompanyApplicants, useSelectStudents, useRejectStudents } from '../hooks/useAdminHooks';
 import { 
   CheckSquare, ChevronDown, ChevronUp, Loader2, CheckCircle, 
@@ -27,12 +28,19 @@ const SelectionCenter = () => {
     }
   };
 
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-3 mb-8">
-        <CheckSquare className="w-8 h-8 text-accent-admin" />
-        <h1 className="text-3xl font-bold text-white tracking-tight">Selection Center</h1>
+    <div className="space-y-6 mt-10 h-[calc(100vh-[120px])] flex flex-col">
+      <div className="flex items-center space-x-3 mb-4 shrink-0">
+        <div className="p-3 bg-accent-gold/10 rounded-2xl border border-accent-gold/20">
+          <CheckSquare className="w-8 h-8 text-accent-gold" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-black text-light tracking-tight">Selection Center</h1>
+          <p className="text-neutral-500 mt-1 text-sm">Review applicants, finalize placements, and trigger alumni migration.</p>
+        </div>
       </div>
+
 
       {isLoading ? (
         <div className="h-64 flex flex-col items-center justify-center text-text-muted space-y-4">
@@ -184,6 +192,7 @@ const SelectionCenter = () => {
           })}
         </div>
       )}
+
     </div>
   );
 };

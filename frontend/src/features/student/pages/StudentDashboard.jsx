@@ -15,11 +15,13 @@ const StudentDashboard = () => {
 
   const companies = companiesData?.data?.companies || [];
   
+
   const userSkills = user?.skills?.map(s => s.toLowerCase()) || [];
   const eligibleCount = companies.filter(c => {
     const hasRequiredSkill = c.jdSkills?.some(skill => userSkills.includes(skill.toLowerCase()));
     return user?.cgpa >= c.cgpaCriteria && hasRequiredSkill;
   }).length;
+
   const appliedCount = user?.applications?.length || 0;
   const placementStatus = user?.placementStatus || 'Active';
 
@@ -34,24 +36,24 @@ const StudentDashboard = () => {
   }, [companies.length]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mt-10">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white flex items-center">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-light flex items-center">
           Good morning, {user?.name?.split(' ')[0]} <span className="ml-2 animate-bounce origin-bottom">👋</span>
         </h1>
-        <p className="text-text-secondary">Here's your placement summary for this season.</p>
+        <p className="text-neutral-300">Here's your placement summary for this season.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <KPICard title="Eligible Companies" value={eligibleCount} icon={Building2} colorClass="bg-accent-primary" delay={0.1} />
-        <KPICard title="Applications" value={appliedCount} icon={Briefcase} colorClass="bg-accent-admin" delay={0.2} />
-        <KPICard title="Status" value={placementStatus} icon={GraduationCap} colorClass={placementStatus === 'PLACED' ? "bg-emerald-500" : "bg-indigo-500"} delay={0.3} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <KPICard title="Eligible Companies" value={eligibleCount} icon={Building2} colorClass="bg-brand-violet" delay={0.1} />
+        <KPICard title="Applications" value={appliedCount} icon={Briefcase} colorClass="bg-accent-gold" delay={0.2} />
+        <KPICard title="Status" value={placementStatus} icon={GraduationCap} colorClass={placementStatus === 'PLACED' ? "bg-accent-teal" : "bg-brand-iris"} delay={0.3} />
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 mt-20">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-white tracking-tight">Recommended for You</h2>
-          <button className="text-accent-primary hover:text-indigo-400 text-sm font-medium flex items-center transition-colors">
+          <h2 className="text-2xl font-bold text-light tracking-tight">Recommended for You</h2>
+          <button className="text-brand-violet hover:text-brand-lavender text-sm font-medium flex items-center transition-colors interactive">
             View All <ArrowRight className="w-4 h-4 ml-1" />
           </button>
         </div>
@@ -59,7 +61,7 @@ const StudentDashboard = () => {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-80 rounded-[16px] bg-gradient-to-r from-surface via-white/5 to-surface animate-pulse border border-border" />
+              <div key={i} className="h-80 rounded-2xl bg-gradient-to-r from-surface via-light/5 to-surface animate-pulse border border-neutral-700/50" />
             ))}
           </div>
         ) : companies.length > 0 ? (
@@ -70,11 +72,11 @@ const StudentDashboard = () => {
           </div>
         ) : (
           <div className="glass-card p-12 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 rounded-full bg-surface border border-border flex items-center justify-center mb-4">
-              <Building2 className="w-8 h-8 text-text-muted" />
+            <div className="w-16 h-16 rounded-full bg-surface border border-neutral-700/50 flex items-center justify-center mb-4">
+              <Building2 className="w-8 h-8 text-neutral-500" />
             </div>
-            <h3 className="text-xl font-bold text-white">No companies available</h3>
-            <p className="text-text-muted mt-2 max-w-sm">The placement cell hasn't added any eligible companies. Keep checking back!</p>
+            <h3 className="text-xl font-bold text-light">No companies available</h3>
+            <p className="text-neutral-500 mt-2 max-w-sm">The placement cell hasn't added any eligible companies. Keep checking back!</p>
           </div>
         )}
       </div>

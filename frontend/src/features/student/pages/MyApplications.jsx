@@ -33,20 +33,20 @@ const MyApplications = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-10">
       <div className="flex items-center space-x-3 mb-8">
-        <div className="p-3 bg-accent-admin/10 rounded-xl border border-accent-admin/20">
-          <Briefcase className="w-8 h-8 text-accent-admin" />
+        <div className="p-3 bg-accent-gold/10 rounded-2xl border border-accent-gold/20">
+          <Briefcase className="w-8 h-8 text-accent-gold" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">My Applications</h1>
-          <p className="text-text-muted mt-1 text-sm">Track the status of your company applications in real-time.</p>
+          <h1 className="text-3xl font-bold text-light tracking-tight">My Applications</h1>
+          <p className="text-neutral-500 mt-1 text-sm">Track the status of your company applications in real-time.</p>
         </div>
       </div>
       
       {isLoading ? (
         <div className="space-y-4">
-          {[1,2,3].map(i => <div key={i} className="h-24 bg-white/5 rounded-xl animate-pulse" />)}
+          {[1,2,3].map(i => <div key={i} className="h-24 bg-light/5 rounded-2xl animate-pulse" />)}
         </div>
       ) : applications.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -55,22 +55,22 @@ const MyApplications = () => {
             const StatusIcon = statusInfo.icon;
             
             return (
-              <div key={i} className={cn("glass-card p-6 flex flex-col justify-between transition-all group", statusInfo.bg, statusInfo.border)}>
+              <div key={i} className={cn("glass-card p-6 flex flex-col justify-between interactive group", statusInfo.bg, statusInfo.border)}>
                  <div className="flex items-start justify-between">
                    <div className="flex items-center space-x-3">
-                     <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center border border-white/5">
-                        <Building2 className="w-5 h-5 text-white" />
+                     <div className="w-10 h-10 rounded-2xl bg-surface flex items-center justify-center border border-light/5">
+                        <Building2 className="w-5 h-5 text-light" />
                      </div>
                      <div>
-                       <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{app.companyName}</h3>
-                       <p className="text-[10px] text-text-muted mt-0.5">APPLIED {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(app.appliedAt)}</p>
+                       <h3 className="font-bold text-lg text-light group-hover:text-amber-400 transition-colors">{app.companyName}</h3>
+                       <p className="text-[10px] text-neutral-500 mt-0.5">APPLIED {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(app.appliedAt)}</p>
                      </div>
                    </div>
                  </div>
                  
-                 <div className="mt-6 flex items-center justify-end border-t border-white/10 pt-4">
-                    <span className="text-[10px] text-text-secondary font-bold uppercase tracking-widest mr-2">Status</span>
-                    <div className="flex items-center px-3 py-1 bg-surface-raised rounded-md border border-white/5">
+                 <div className="mt-6 flex items-center justify-end border-t border-light/10 pt-4">
+                    <span className="text-[10px] text-neutral-300 font-bold uppercase tracking-widest mr-2">Status</span>
+                    <div className="flex items-center px-3 py-1 bg-deep rounded-md border border-light/5">
                       <StatusIcon className={cn("w-4 h-4 mr-1.5", statusInfo.color)} />
                       <span className={cn("font-bold text-sm tracking-wide", statusInfo.color)}>{app.status}</span>
                     </div>
@@ -80,10 +80,10 @@ const MyApplications = () => {
           })}
         </div>
       ) : (
-        <div className="glass-card p-12 text-center max-w-lg mx-auto border-dashed border-white/10">
-            <Building2 className="w-12 h-12 text-text-muted mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white">No applications yet</h3>
-            <p className="text-text-muted mt-2">Apply to eligible companies from your dashboard and track them here.</p>
+        <div className="glass-card p-12 text-center max-w-lg mx-auto border-dashed border-light/10">
+            <Building2 className="w-12 h-12 text-neutral-500 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-light">No applications yet</h3>
+            <p className="text-neutral-500 mt-2">Apply to eligible companies from your dashboard and track them here.</p>
         </div>
       )}
     </div>

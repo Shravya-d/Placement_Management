@@ -30,17 +30,17 @@ const KPICard = ({ title, value, icon: Icon, colorClass, delay = 0 }) => {
   }, [value, delay]);
 
   return (
-    <div ref={cardRef} className="glass-card p-6 relative overflow-hidden group">
-      <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors pointer-events-none blur-2xl" />
+    <div ref={cardRef} className="glass-card p-6 relative overflow-hidden group interactive">
+      <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-light/5 group-hover:bg-light/10 transition-colors pointer-events-none blur-2xl" />
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-sm font-medium text-text-muted tracking-wider uppercase">{title}</p>
-          <h3 className="text-3xl font-bold text-white mt-2 font-inter tracking-tight">
+          <p className="text-sm font-medium text-neutral-300 tracking-wider uppercase">{title}</p>
+          <h3 className="text-3xl font-bold text-light mt-2 font-sans tracking-tight">
             <span ref={counterRef}>0</span>
           </h3>
         </div>
-        <div className={cn("p-3 rounded-xl", colorClass)}>
-          <Icon className="w-6 h-6 text-white" />
+        <div className={cn("p-3 rounded-2xl", colorClass)}>
+          <Icon className="w-6 h-6 text-light" />
         </div>
       </div>
     </div>

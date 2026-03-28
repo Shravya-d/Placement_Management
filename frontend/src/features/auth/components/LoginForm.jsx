@@ -16,21 +16,21 @@ const schema = z.object({
 
 const CustomInput = ({ label, icon: Icon, error, register, name, ...props }) => (
   <div className="space-y-1 w-full">
-    <label className="text-xs font-semibold tracking-wider text-text-muted uppercase ml-1 block">{label}</label>
+    <label className="text-xs font-semibold tracking-wider text-neutral-500 uppercase ml-1 block">{label}</label>
     <div className="relative group">
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Icon className={cn("w-4 h-4 transition-colors", error ? "text-rose-500" : "text-text-muted group-focus-within:text-white")} />
+        <Icon className={cn("w-4 h-4 transition-colors", error ? "text-rose-500" : "text-neutral-500 group-focus-within:text-light")} />
       </div>
       <input
         {...register(name)}
         {...props}
         className={cn(
-          "w-full bg-white/5 border rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/20",
+          "w-full bg-light/5 border rounded-2xl pl-10 pr-4 py-3 text-sm text-light placeholder:text-light/20",
           "transition-all duration-300 backdrop-blur-sm",
-          "focus:bg-white/10 focus:outline-none focus:shadow-[0_0_15px_rgba(99,102,241,0.2)]",
+          "focus:bg-light/10 focus:outline-none focus:shadow-glow",
           error 
             ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50" 
-            : "border-white/10 hover:border-white/20 focus:border-accent-primary focus:ring-1 focus:ring-accent-primary/50"
+            : "border-light/10 hover:border-light/20 focus:border-brand-violet focus:ring-1 focus:ring-brand-violet/50"
         )}
       />
     </div>
@@ -79,9 +79,9 @@ const LoginForm = () => {
 
   const getButtonGradient = () => {
     switch(selectedRole) {
-       case 'admin': return 'bg-gradient-to-r from-accent-admin to-amber-600 hover:shadow-[0_0_25px_rgba(245,158,11,0.5)]';
-       case 'alumni': return 'bg-gradient-to-r from-accent-alumni to-emerald-600 hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]';
-       default: return 'bg-gradient-to-r from-accent-primary to-indigo-600 hover:shadow-[0_0_25px_rgba(99,102,241,0.5)]';
+       case 'admin': return 'bg-gradient-to-r from-accent-gold to-accent-red hover:shadow-[0_0_25px_rgba(245,158,11,0.5)]';
+       case 'alumni': return 'bg-gradient-to-r from-accent-teal to-emerald-600 hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]';
+       default: return 'bg-gradient-to-r from-brand-violet to-brand-iris hover:shadow-glow';
     }
   };
 
@@ -93,21 +93,21 @@ const LoginForm = () => {
         <p className="text-text-muted text-sm">Securely log in to manage your career journey.</p>
       </div>
 
-      <div className="form-element mb-8 ring-1 ring-white/10 bg-white/5 p-1 rounded-xl flex justify-between relative overflow-hidden">
+      <div className="form-element mb-8 ring-1 ring-light/10 bg-light/5 p-1 rounded-2xl flex justify-between relative overflow-hidden">
         {/* Animated toggle background */}
-        <div className={cn("absolute inset-y-1 w-[calc(33.33%-4px)] rounded-lg transition-all duration-300 ease-in-out", 
-          selectedRole === 'student' ? 'translate-x-[2px] bg-accent-primary shadow-[0_0_20px_rgba(99,102,241,0.4)]' : 
-          selectedRole === 'alumni' ? 'translate-x-[calc(100%+4px)] bg-accent-alumni shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 
-          'translate-x-[calc(200%+6px)] bg-accent-admin shadow-[0_0_20px_rgba(245,158,11,0.4)]')} 
+        <div className={cn("absolute inset-y-1 w-[calc(33.33%-4px)] rounded-xl transition-all duration-300 ease-in-out", 
+          selectedRole === 'student' ? 'translate-x-[2px] bg-brand-violet shadow-[0_0_20px_rgba(123,92,240,0.4)]' : 
+          selectedRole === 'alumni' ? 'translate-x-[calc(100%+4px)] bg-accent-teal shadow-[0_0_20px_rgba(0,212,170,0.4)]' : 
+          'translate-x-[calc(200%+6px)] bg-accent-gold shadow-[0_0_20px_rgba(245,158,11,0.4)]')} 
         />
         
-        <button type="button" onClick={() => setValue('role', 'student')} className={cn("relative z-10 w-1/3 py-2 text-sm font-semibold transition-colors", selectedRole === 'student' ? "text-white" : "text-text-secondary hover:text-white")}>
+        <button type="button" onClick={() => setValue('role', 'student')} className={cn("relative z-10 w-1/3 py-2 text-sm font-semibold transition-colors interactive", selectedRole === 'student' ? "text-light" : "text-neutral-300 hover:text-light")}>
           Student
         </button>
-        <button type="button" onClick={() => setValue('role', 'alumni')} className={cn("relative z-10 w-1/3 py-2 text-sm font-semibold transition-colors", selectedRole === 'alumni' ? "text-white" : "text-text-secondary hover:text-white")}>
+        <button type="button" onClick={() => setValue('role', 'alumni')} className={cn("relative z-10 w-1/3 py-2 text-sm font-semibold transition-colors interactive", selectedRole === 'alumni' ? "text-light" : "text-neutral-300 hover:text-light")}>
           Alumni
         </button>
-        <button type="button" onClick={() => setValue('role', 'admin')} className={cn("relative z-10 w-1/3 py-2 text-sm font-semibold transition-colors", selectedRole === 'admin' ? "text-white" : "text-text-secondary hover:text-white")}>
+        <button type="button" onClick={() => setValue('role', 'admin')} className={cn("relative z-10 w-1/3 py-2 text-sm font-semibold transition-colors interactive", selectedRole === 'admin' ? "text-light" : "text-neutral-300 hover:text-light")}>
           Admin
         </button>
       </div>
@@ -128,7 +128,7 @@ const LoginForm = () => {
           type="submit"
           disabled={isPending}
           className={cn(
-            "form-element w-full py-3.5 mt-2 rounded-xl text-white text-sm font-bold shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all flex items-center justify-center hover:scale-[1.02] active:scale-[0.98] group",
+            "form-element w-full py-3.5 mt-2 rounded-2xl text-light text-sm font-bold transition-all flex items-center justify-center interactive group",
             getButtonGradient(),
             isPending ? "opacity-80 pointer-events-none" : ""
           )}

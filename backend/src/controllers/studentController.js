@@ -27,6 +27,17 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
 
 exports.getEligibleCompanies = catchAsync(async (req, res, next) => {
     const student = await Student.findById(req.user.id);
+    const dept = await PlacementDept.findOne();
+
+    if (!dept || !student.eligibleCompanies || student.eligibleCompanies.length === 0) {
+        return res.status(200).json({
+            status: 'success',
+            data: {
+                companies: []
+            }
+        });
+    }
+
 
     const dept = await PlacementDept.findOne();
     
@@ -38,7 +49,9 @@ exports.getEligibleCompanies = catchAsync(async (req, res, next) => {
     res.status(200).json({
         status: 'success',
         data: {
+
             companies: eligibleCompanies
+
         }
     });
 });
