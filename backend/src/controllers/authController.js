@@ -49,6 +49,9 @@ exports.registerStudent = catchAsync(async (req, res, next) => {
         resume: req.body.resume
     });
 
+    const matchingService = require('../services/matchingService');
+    await matchingService.evaluateStudentForExistingCompanies(newStudent);
+
     await emailService.sendRegistrationEmail(newStudent);
 
     createSendToken(newStudent, 201, req, res);

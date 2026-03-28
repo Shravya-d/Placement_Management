@@ -15,7 +15,11 @@ const StudentDashboard = () => {
 
   const companies = companiesData?.data?.companies || [];
   
-  const eligibleCount = companies.filter(c => user?.cgpa >= c.cgpaCriteria).length;
+  const userSkills = user?.skills?.map(s => s.toLowerCase()) || [];
+  const eligibleCount = companies.filter(c => {
+    const hasRequiredSkill = c.jdSkills?.some(skill => userSkills.includes(skill.toLowerCase()));
+    return user?.cgpa >= c.cgpaCriteria && hasRequiredSkill;
+  }).length;
   const appliedCount = user?.applications?.length || 0;
   const placementStatus = user?.placementStatus || 'Active';
 

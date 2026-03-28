@@ -4,50 +4,65 @@
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-
-    --radius: 0.5rem;
+    --glow-primary: 99, 102, 241;
+    --glow-admin: 245, 158, 11;
+    --glow-alumni: 16, 185, 129;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-text-primary font-inter antialiased overflow-x-hidden;
+    @apply bg-[#020305] text-[#F8FAFC] antialiased overflow-x-hidden min-h-screen relative selection:bg-accent-primary/40 selection:text-white transition-colors duration-700 ease-out;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* Ultra-Premium Animated Aurora/Mesh Background - Enhanced Contrast */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1;
+    background: 
+      radial-gradient(circle at 15% 40%, rgba(var(--glow-primary), 0.09) 0%, transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(var(--glow-alumni), 0.09) 0%, transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(var(--glow-admin), 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    animation: drift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes drift {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.15) translate(-3% , 3%); }
   }
 }
 
-/* Custom Utilities based on Design System */
 @layer utilities {
+  /* Hyper-realistic Glassmorphism with Insane Depth and Smoothness */
   .glass-card {
-    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_24px_64px_rgba(0,0,0,0.4)] rounded-[16px];
+    @apply backdrop-blur-[32px] bg-[#0A0E17]/50 border border-white/[0.06] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.08)] rounded-[24px] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-[0_24px_60px_-10px_rgba(0,0,0,0.9),inset_0_2px_2px_rgba(255,255,255,0.15)] hover:bg-[#0D121B]/60 hover:border-white/[0.12];
+  }
+
+  /* Universal Glowing Text */
+  .text-glow {
+    text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
+  }
+  
+  /* Inputs: Sharper, highly-visible contrasts */
+  input, textarea, select {
+    @apply bg-[#080B12]/80 border border-white/[0.1] focus:bg-[#0C111A]/90 focus:border-accent-primary/80 transition-all duration-300 backdrop-blur-3xl shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)] focus:shadow-[0_0_20px_rgba(99,102,241,0.15),inset_0_2px_8px_rgba(0,0,0,0.5)] outline-none text-white placeholder:text-white/30;
+  }
+
+  /* Sleek Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #020305;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-white/[0.15] rounded-full hover:bg-white/[0.25] transition-all duration-300 border-[2px] border-[#020305] bg-clip-padding;
   }
 }

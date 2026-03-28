@@ -53,6 +53,33 @@ export const useSelectStudents = () => {
   });
 };
 
+export const useRejectStudents = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: adminApi.rejectStudents,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['company-applicants'] });
+      toast.success(`${variables.studentIds.length} students rejected and notified.`, {
+        className: 'border-l-4 border-l-emerald-500',
+        duration: 3000
+      });
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Failed to reject students', {
+        className: 'border-l-4 border-l-rose-500'
+      });
+    }
+  });
+};
+
+export const useCompanyApplicants = () => {
+  return useQuery({
+    queryKey: ['company-applicants'],
+    queryFn: adminApi.getCompanyApplicants
+  });
+};
+
 export const useCompanyHistory = () => {
   return useQuery({
     queryKey: ['company-history'],

@@ -9,7 +9,9 @@ const CompanyCard = ({ company, onClickFeedback }) => {
   const { user } = useAuthStore();
   const { mutate: apply, isPending } = useApplyToCompany();
   
-  const isEligible = user?.cgpa >= company.cgpaCriteria;
+  const userSkills = user?.skills?.map(s => s.toLowerCase()) || [];
+  const hasRequiredSkill = company.jdSkills?.some(skill => userSkills.includes(skill.toLowerCase()));
+  const isEligible = user?.cgpa >= company.cgpaCriteria && hasRequiredSkill;
 
   const handleApply = () => { apply(company._id); };
 

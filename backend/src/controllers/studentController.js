@@ -14,6 +14,9 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
         { new: true, runValidators: true }
     );
 
+    const matchingService = require('../services/matchingService');
+    await matchingService.evaluateStudentForExistingCompanies(updatedStudent);
+
     res.status(200).json({
         status: 'success',
         data: {
@@ -25,18 +28,17 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
 exports.getEligibleCompanies = catchAsync(async (req, res, next) => {
     const student = await Student.findById(req.user.id);
 
-    // In placementDept, find companies where _id is in student.eligibleCompanies
-    const dept = await PlacementDept.findOne({}, {
-        companies: {
-            $elemMatch: { _id: { $in: student.eligibleCompanies } }
-        }
-    });
+    const dept = await PlacementDept.findOne();
+    
+    // Fix: ObjectId strict equality bug bypassing filter
+    const eligibleCompanies = dept ? dept.companies.filter(c => 
+        student.eligibleCompanies.some(id => id.toString() === c._id.toString())
+    ) : [];
 
     res.status(200).json({
         status: 'success',
         data: {
-            // Because of the single document design, we extract companies out
-            companies: dept ? dept.companies : []
+            companies: eligibleCompanies
         }
     });
 });
@@ -73,6 +75,14 @@ exports.applyToCompany = catchAsync(async (req, res, next) => {
             matchedSkillsCount++;
         }
     });
+
+    if (matchedSkillsCount === 0) {
+        return next(new AppError('You do not have any of the required skills for this role.', 400));
+    }
+
+    if (company.applicationDeadline && Date.now() > new Date(company.applicationDeadline).getTime()) {
+        return next(new AppError('The application deadline for this company has already passed.', 400));
+    }
 
     // 1. Update Student doc
     student.applications.push({

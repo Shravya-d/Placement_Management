@@ -58,6 +58,14 @@ exports.sendSelectionEmail = async (student, company) => {
     });
 };
 
+exports.sendRejectionEmail = async (student, company) => {
+    await sendEmail({
+        email: student.email,
+        subject: `Update on your application at ${company.companyName}`,
+        message: `Hello ${student.name},\n\nThank you for taking the time to apply for the role of ${company.role} at ${company.companyName}.\n\nAfter careful consideration, the team has decided not to move forward with your application at this time. We encourage you to keep applying for other opportunities on the placement portal.`
+    });
+};
+
 exports.sendFeedbackNotification = async (adminEmail, companyName) => {
     await sendEmail({
         email: adminEmail,
@@ -80,5 +88,15 @@ exports.sendAdminLoginEmail = async (adminDetails) => {
         email: adminDetails.email,
         subject: 'Security Alert: Admin Login Detected',
         message: `Hello ${adminDetails.name},\n\nA successful login was just detected on your Placement Department Admin account. If this was not you, please secure your account immediately.`
+    });
+};
+
+exports.sendDeadlineAlert = async (students, company) => {
+    if (!students || students.length === 0) return;
+    const emails = students.map(s => s.email).join(', ');
+    await sendEmail({
+        email: emails,
+        subject: `URGENT: Application closing for ${company.companyName}`,
+        message: `Hello,\n\nThis is an automated alert that the application window for ${company.companyName} (${company.role}) is closing in approximately 1 hour! \n\nYou are listed as an eligible match. Please log in to your dashboard immediately to complete your application before the deadline passes.`
     });
 };

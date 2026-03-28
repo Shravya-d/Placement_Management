@@ -7,9 +7,13 @@ const matchingService = require('../services/matchingService');
 const emailService = require('../services/emailService');
 
 exports.addCompany = catchAsync(async (req, res, next) => {
-    let dept = await PlacementDept.findOne();
+    let dept = await PlacementDept.findOne().select('+adminDetails.password');
     if (!dept) {
         return next(new AppError('Department not configured', 500));
+    }
+
+    if (!req.body.applicationDeadline || new Date(req.body.applicationDeadline).getTime() <= Date.now()) {
+        return next(new AppError('A valid future application deadline is required.', 400));
     }
 
     const newCompanyData = {
@@ -21,6 +25,7 @@ exports.addCompany = catchAsync(async (req, res, next) => {
         branchesAllowed: req.body.branchesAllowed,
         numberOfCandidates: req.body.numberOfCandidates,
         visitDate: req.body.visitDate,
+        applicationDeadline: req.body.applicationDeadline,
         description: req.body.description
     };
 
@@ -123,5 +128,98 @@ exports.getCompanyHistory = catchAsync(async (req, res, next) => {
         data: {
             history
         }
+    });
+});
+
+exports.updateProfile = catchAsync(async (req, res, next) => {
+    // Only allow specific admin details to be updated (exclude email/password/role)
+    const { name, phone } = req.body;
+    
+    // We only have one PlacementDept document historically. Find it.
+    const dept = await PlacementDept.findOne();
+    if (!dept) return next(new AppError('Admin department not found', 404));
+
+    if (name) dept.adminDetails.name = name;
+    if (phone) dept.adminDetails.phone = phone;
+
+    await dept.save({ validateBeforeSave: false });
+
+    // Format the response to exactly match auth return structure (user object)
+    const user = dept.adminDetails.toObject();
+    user.id = dept._id; // Ensure consistent id mapping for Frontend
+    user.role = 'admin';
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            user
+        }
+    });
+});
+
+exports.getCompanyApplicants = catchAsync(async (req, res, next) => {
+    const dept = await PlacementDept.findOne().populate({
+        path: 'companies.applicants.studentId',
+        select: 'name email usn cgpa branch skills resume applications'
+    });
+
+    if (!dept) {
+        return res.status(200).json({ status: 'success', data: { companies: [] } });
+    }
+
+    const companiesWithApplicants = dept.companies.map(company => {
+        const activeApplicants = company.applicants
+            .filter(app => app.status === 'APPLIED' && app.studentId)
+            .sort((a, b) => (b.matchedSkillsCount || 0) - (a.matchedSkillsCount || 0));
+
+        return {
+            _id: company._id,
+            companyName: company.companyName,
+            role: company.role,
+            jdSkills: company.jdSkills,
+            applicants: activeApplicants
+        };
+    }).filter(c => c.applicants.length > 0);
+
+    res.status(200).json({
+        status: 'success',
+        results: companiesWithApplicants.length,
+        data: {
+            companies: companiesWithApplicants
+        }
+    });
+});
+
+exports.rejectStudents = catchAsync(async (req, res, next) => {
+    const { companyId } = req.params;
+    const { studentIds } = req.body;
+
+    const dept = await PlacementDept.findOne({ 'companies._id': companyId });
+    if (!dept) return next(new AppError('Company not found', 404));
+
+    const company = dept.companies.id(companyId);
+
+    const students = await Student.find({ _id: { $in: studentIds } });
+
+    for (const student of students) {
+        // Mark local applicant document as REJECTED
+        const applicant = company.applicants.find(a => a.studentId.toString() === student._id.toString());
+        if (applicant) applicant.status = 'REJECTED';
+
+        // Update exact application object natively
+        const stApp = student.applications.find(a => a.companyId.toString() === companyId);
+        if (stApp) stApp.status = 'REJECTED';
+        
+        await student.save({ validateBeforeSave: false });
+
+        // Automated standard dispatch
+        await emailService.sendRejectionEmail(student, company);
+    }
+
+    await dept.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Successfully rejected selected students'
     });
 });
