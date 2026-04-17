@@ -13,6 +13,10 @@ export const studentApi = {
     const res = await axiosInstance.get(`/student/company-feedbacks/${companyId}`);
     return res.data;
   },
+  getCompanyEligibility: async (companyId) => {
+    const res = await axiosInstance.get(`/student/eligibility/${companyId}`);
+    return res.data;
+  },
   updateProfile: async (data) => {
     const res = await axiosInstance.patch('/student/profile', data);
     return res.data;

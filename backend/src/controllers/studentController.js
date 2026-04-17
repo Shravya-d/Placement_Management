@@ -142,3 +142,21 @@ exports.viewCompanyFeedbacks = catchAsync(async (req, res, next) => {
         }
     });
 });
+
+exports.getCompanyEligibility = catchAsync(async (req, res, next) => {
+    const { companyId } = req.params;
+    const student = await Student.findById(req.user.id);
+    
+    const dept = await PlacementDept.findOne({ 'companies._id': companyId });
+    if (!dept) return next(new AppError('Company not found', 404));
+
+    const company = dept.companies.id(companyId);
+    
+    const eligibilityService = require('../services/eligibilityService');
+    const breakdown = await eligibilityService.evaluateStudentEligibility(student, company);
+    
+    res.status(200).json({
+        status: 'success',
+        data: breakdown
+    });
+});

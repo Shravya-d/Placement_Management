@@ -6,6 +6,34 @@ const catchAsync = require('../utils/catchAsync');
 const matchingService = require('../services/matchingService');
 const emailService = require('../services/emailService');
 
+exports.getPlacements = catchAsync(async (req, res, next) => {
+    // Pagination defaults: if no params provided, default limit to a safe high number (e.g. 500) to not break existing UI initially
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50; 
+    const skip = (page - 1) * limit;
+
+    const total = await Alumni.countDocuments();
+    const placements = await Alumni.find()
+        .sort('-placedDate')
+        .skip(skip)
+        .limit(limit);
+
+    res.status(200).json({
+        status: 'success',
+        results: placements.length,
+        message: 'Successfully retrieved placed candidates',
+        data: {
+            placements,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        }
+    });
+});
+
 exports.addCompany = catchAsync(async (req, res, next) => {
     let dept = await PlacementDept.findOne().select('+adminDetails.password');
     if (!dept) {
@@ -117,12 +145,13 @@ exports.getActiveDrives = catchAsync(async (req, res, next) => {
 
     if (!dept) return next(new AppError('Dept not configured', 500));
 
-    const activeDrives = await Promise.all(dept.companies.map(async c => {
-        // Fetch Alumni placed in this exact company and role
+    const activeDrives = [];
+    for (const c of dept.companies) {
+        // Fetch Alumni placed in this exact company and role using lean and projection
         const placedAlumni = await Alumni.find({ 
             companyJoined: c.companyName, 
             role: c.role 
-        });
+        }).select('_id studentData placedDate').lean();
 
         const alumniApplicants = placedAlumni.map(al => ({
             _id: al._id, 
@@ -154,7 +183,7 @@ exports.getActiveDrives = catchAsync(async (req, res, next) => {
             appliedAt: a.appliedAt
         }));
 
-        return {
+        activeDrives.push({
             _id: c._id,
             companyName: c.companyName,
             role: c.role,
@@ -162,8 +191,8 @@ exports.getActiveDrives = catchAsync(async (req, res, next) => {
             numberOfCandidates: c.numberOfCandidates,
             applicants: [...activeApplicants, ...alumniApplicants],
             selectedStudents: c.selectedStudents || []
-        };
-    }));
+        });
+    }
 
     res.status(200).json({
         status: 'success',
@@ -252,16 +281,40 @@ exports.getCompanyApplicants = catchAsync(async (req, res, next) => {
         return res.status(200).json({ status: 'success', data: { companies: [] } });
     }
 
+    const similarityService = require('../services/similarityService');
+
     const companiesWithApplicants = dept.companies.map(company => {
         const activeApplicants = company.applicants
             .filter(app => app.status === 'APPLIED' && app.studentId)
-            .sort((a, b) => (b.matchedSkillsCount || 0) - (a.matchedSkillsCount || 0));
+            .map(app => {
+                const semanticScore = similarityService.calculateSemanticScore(app.studentId.skills || [], company.jdSkills || []);
+                
+                let studentProfile = app.studentId.toObject ? app.studentId.toObject() : app.studentId;
+                
+                if (company.anonymousMode) {
+                    studentProfile = {
+                        _id: studentProfile._id,
+                        name: `Candidate #${studentProfile._id.toString().slice(-4)}`,
+                        branch: studentProfile.branch,
+                        cgpa: studentProfile.cgpa,
+                        skills: studentProfile.skills
+                    };
+                }
+
+                return {
+                    ...app.toObject(),
+                    studentId: studentProfile,
+                    semanticScore: Math.round(semanticScore * 100)
+                };
+            })
+            .sort((a, b) => b.semanticScore - a.semanticScore);
 
         return {
             _id: company._id,
             companyName: company.companyName,
             role: company.role,
             jdSkills: company.jdSkills,
+            anonymousMode: company.anonymousMode,
             applicants: activeApplicants
         };
     }).filter(c => c.applicants.length > 0);

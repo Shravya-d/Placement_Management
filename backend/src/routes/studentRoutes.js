@@ -14,5 +14,6 @@ router.get('/eligible-companies', studentController.getEligibleCompanies);
 
 router.post('/apply/:companyId', studentController.applyToCompany);
 router.get('/company-feedbacks/:companyId', studentController.viewCompanyFeedbacks);
+router.get('/eligibility/:companyId', studentController.getCompanyEligibility);
 
 module.exports = router;

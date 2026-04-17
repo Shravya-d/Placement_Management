@@ -5,7 +5,7 @@ import EligibilityBadge from './EligibilityBadge';
 import { useAuthStore } from '../../auth/store/authStore';
 import { useApplyToCompany } from '../hooks/useApplyToCompany';
 
-const CompanyCard = ({ company, onClickFeedback }) => {
+const CompanyCard = ({ company, onClickFeedback, onClickEligibility }) => {
   const { user } = useAuthStore();
   const { mutate: apply, isPending } = useApplyToCompany();
 
@@ -68,8 +68,11 @@ const CompanyCard = ({ company, onClickFeedback }) => {
       </div>
 
       <div className="flex items-center space-x-3 pt-4 border-t border-neutral-700/50">
+        <button onClick={() => onClickEligibility(company._id)} className="flex-1 h-11 rounded-2xl bg-surface border border-brand-violet/30 text-brand-violet text-sm font-medium hover:bg-brand-violet/10 interactive flex items-center justify-center transition-all">
+          AI Match
+        </button>
         <button onClick={() => onClickFeedback(company._id)} className="flex-1 h-11 rounded-2xl bg-surface border border-neutral-700/50 text-light text-sm font-medium hover:bg-light/5 interactive flex items-center justify-center transition-all">
-          View Feedback
+          Reviews
         </button>
         {hasApplied ? (
            <button disabled className="flex-1 h-11 rounded-2xl bg-accent-teal/10 text-accent-teal border border-accent-teal/20 text-sm font-medium transition-all flex items-center justify-center">

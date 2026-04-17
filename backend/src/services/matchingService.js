@@ -2,8 +2,10 @@ const Student = require('../models/Student');
 const emailService = require('./emailService');
 
 exports.matchStudentsToCompany = async (company) => {
-    // 1. Fetch NOT_PLACED students
-    const students = await Student.find({ placementStatus: 'NOT_PLACED' });
+    // 1. Fetch NOT_PLACED students with projected fields to save memory
+    const students = await Student.find({ placementStatus: 'NOT_PLACED' })
+        .select('name email branch cgpa backlogs skills eligibleCompanies selectedCompanies applications')
+        .lean();
 
     let eligibleStudents = [];
 
@@ -37,11 +39,8 @@ exports.matchStudentsToCompany = async (company) => {
             }
         });
 
-
         // Add to eligible list only if matches > 0 (MUST have at least one required skill)
         if (matchedSkillsCount === 0) return;
-
-
 
         eligibleStudents.push({
             student,
@@ -60,9 +59,11 @@ exports.matchStudentsToCompany = async (company) => {
     // Update students' eligibleCompanies field
     // Also trigger email notification
     for (const item of eligibleStudents) {
-        // update the student document
-        item.student.eligibleCompanies.push(company._id);
-        await item.student.save({ validateBeforeSave: false });
+        // update the student document using updateOne
+        await Student.updateOne(
+            { _id: item.student._id },
+            { $addToSet: { eligibleCompanies: company._id } }
+        );
 
         // Send email
         await emailService.sendJobEligibilityEmail(item.student, company);

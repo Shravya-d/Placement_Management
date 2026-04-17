@@ -11,6 +11,7 @@ router.use(role.restrictTo('admin'));
 
 router.post('/companies', placementDeptController.addCompany);
 router.get('/companies/applicants', placementDeptController.getCompanyApplicants);
+router.get('/placements', placementDeptController.getPlacements);
 router.post('/companies/:companyId/select', placementDeptController.selectStudents);
 
 router.post('/companies/:companyId/reject', placementDeptController.rejectStudents);

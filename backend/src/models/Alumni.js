@@ -36,6 +36,9 @@ alumniSchema.methods.correctPassword = async function(candidatePassword, userPas
     return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+alumniSchema.index({ 'studentData.branch': 1 });
+alumniSchema.index({ placedDate: -1 });
+
 const Alumni = mongoose.model('Alumni', alumniSchema, 'alumni');
 
 module.exports = Alumni;

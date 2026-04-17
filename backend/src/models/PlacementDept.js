@@ -68,6 +68,10 @@ const companySchema = new mongoose.Schema({
         default: false
     },
     description: String,
+    anonymousMode: {
+        type: Boolean,
+        default: false
+    },
     applicants: [applicantSchema],
     selectedStudents: [{
         type: mongoose.Schema.Types.ObjectId,

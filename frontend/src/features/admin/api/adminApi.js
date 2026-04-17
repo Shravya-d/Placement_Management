@@ -25,6 +25,10 @@ export const adminApi = {
     const res = await axiosInstance.get('/placement/active-drives');
     return res.data;
   },
+  getPlacements: async () => {
+    const res = await axiosInstance.get('/placement/placements');
+    return res.data;
+  },
   updateProfile: async (data) => {
     const res = await axiosInstance.patch('/placement/profile', data);
     return res.data;

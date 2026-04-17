@@ -81,6 +81,10 @@ studentSchema.methods.correctPassword = async function (candidatePassword, userP
     return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+studentSchema.index({ placementStatus: 1 });
+studentSchema.index({ branch: 1, cgpa: -1 });
+studentSchema.index({ skills: 1 });
+
 const Student = mongoose.model('Student', studentSchema);
 
 module.exports = Student;

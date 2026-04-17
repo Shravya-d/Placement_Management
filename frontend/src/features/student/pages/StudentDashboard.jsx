@@ -3,6 +3,7 @@ import { useAuthStore } from '../../auth/store/authStore';
 import { useEligibleCompanies } from '../hooks/useEligibleCompanies';
 import CompanyCard from '../components/CompanyCard';
 import FeedbackModal from '../components/FeedbackModal';
+import EligibilityModal from '../components/EligibilityModal';
 import KPICard from '../../../shared/components/KPICard';
 import { Building2, Briefcase, GraduationCap, ArrowRight } from 'lucide-react';
 import { gsap } from '../../../animations/gsap.config';
@@ -11,6 +12,7 @@ const StudentDashboard = () => {
   const { user } = useAuthStore();
   const { data: companiesData, isLoading } = useEligibleCompanies();
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
+  const [selectedEligibilityId, setSelectedEligibilityId] = useState(null);
   const gridRef = useRef(null);
 
   const companies = companiesData?.data?.companies || [];
@@ -71,7 +73,12 @@ const StudentDashboard = () => {
         ) : companies.length > 0 ? (
           <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {companies.map((company) => (
-              <CompanyCard key={company._id} company={company} onClickFeedback={setSelectedCompanyId} />
+              <CompanyCard 
+                  key={company._id} 
+                  company={company} 
+                  onClickFeedback={setSelectedCompanyId} 
+                  onClickEligibility={setSelectedEligibilityId}
+              />
             ))}
           </div>
         ) : (
@@ -86,6 +93,7 @@ const StudentDashboard = () => {
       </div>
 
       <FeedbackModal isOpen={!!selectedCompanyId} onClose={() => setSelectedCompanyId(null)} companyId={selectedCompanyId} />
+      <EligibilityModal isOpen={!!selectedEligibilityId} onClose={() => setSelectedEligibilityId(null)} companyId={selectedEligibilityId} />
     </div>
   );
 };

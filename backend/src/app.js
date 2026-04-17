@@ -3,6 +3,7 @@ const cors = require('cors');
 const globalErrorHandler = require('./middleware/errorHandler');
 const AppError = require('./utils/AppError');
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 
 const app = express();
 
@@ -12,17 +13,24 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+if (process.env.NODE_ENV !== 'test') {
+    app.use(morgan('dev'));
+}
 
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const placementDeptRoutes = require('./routes/placementDeptRoutes');
 const alumniRoutes = require('./routes/alumniRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
+const courseRoutes = require('./routes/courseRoutes');
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/placement', placementDeptRoutes);
 app.use('/api/alumni', alumniRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/courses', courseRoutes);
 
 // Main route
 app.get('/', (req, res) => {

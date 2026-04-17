@@ -13,9 +13,11 @@ import PlacementStatus from '../features/student/pages/PlacementStatus';
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
 import ManageCompanies from '../features/admin/pages/ManageCompanies';
 import SelectionCenter from '../features/admin/pages/SelectionCenter';
+import PlacementsList from '../features/admin/pages/PlacementsList';
 import AlumniDashboard from '../features/alumni/pages/AlumniDashboard';
 import AlumniNetwork from '../features/alumni/pages/AlumniNetwork';
 import UserProfile from '../features/profile/pages/UserProfile';
+import AnalyticsDashboard from '../features/analytics/pages/AnalyticsDashboard';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -32,6 +34,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/analytics" element={<AnalyticsDashboard />} />
         
         <Route element={<RoleGuard allowedRole="student" />}>
           <Route path="/student" element={<StudentLayout />}>
@@ -47,6 +50,7 @@ const AppRoutes = () => {
              <Route index element={<AdminDashboard />} />
              <Route path="companies" element={<ManageCompanies />} />
              <Route path="selection" element={<SelectionCenter />} />
+             <Route path="placements" element={<PlacementsList />} />
              <Route path="profile" element={<UserProfile />} />
           </Route>
         </Route>

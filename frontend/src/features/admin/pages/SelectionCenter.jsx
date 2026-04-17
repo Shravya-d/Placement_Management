@@ -106,6 +106,7 @@ const SelectionCenter = () => {
                               <th className="px-6 py-4">Applicant</th>
                               <th className="px-6 py-4 text-center">CGPA</th>
                               <th className="px-6 py-4 text-center">Skills Matched</th>
+                              <th className="px-6 py-4 text-center">Match % (AI)</th>
                               <th className="px-6 py-4 text-center">Resume</th>
                               <th className="px-6 py-4 text-right">Actions</th>
                             </tr>
@@ -140,6 +141,11 @@ const SelectionCenter = () => {
                                     <div className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 text-sm font-bold border border-amber-500/20">
                                       <Wrench className="w-4 h-4" />
                                       <span>{app.matchedSkillsCount}</span>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 text-center">
+                                    <div className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 text-sm font-bold border border-indigo-500/20">
+                                      <span>{app.semanticScore ?? 0}%</span>
                                     </div>
                                   </td>
                                   <td className="px-6 py-4 text-center">

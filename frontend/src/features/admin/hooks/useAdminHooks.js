@@ -93,3 +93,10 @@ export const useActiveDrives = () => {
     queryFn: adminApi.getActiveDrives
   });
 };
+
+export const usePlacements = () => {
+  return useQuery({
+    queryKey: ['placements'],
+    queryFn: adminApi.getPlacements
+  });
+};
