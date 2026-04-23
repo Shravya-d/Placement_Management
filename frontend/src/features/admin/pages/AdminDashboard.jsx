@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+/*import React, { useRef, useEffect } from 'react';
 import KPICard from '../../../shared/components/KPICard';
 import { useCompanyHistory } from '../hooks/useAdminHooks';
 import { useAdminStore } from '../store/adminStore';
@@ -6,7 +6,7 @@ import { Building2, Users, UserCheck, Percent, Plus } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { gsap } from '../../../animations/gsap.config';
 import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 const COLORS = ['#6366F1', '#10B981', '#F59E0B', '#F43F5E', '#8B5CF6', '#EC4899', '#0EA5E9'];
 
 const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, percent, name, value }) => {
@@ -60,6 +60,7 @@ const AdminDashboard = () => {
   }, []);
 
   return (
+    
     <div className="space-y-8 relative">
       <style>{`@keyframes progress { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
       
@@ -130,6 +131,165 @@ const AdminDashboard = () => {
                </div>
             ))}
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
+*/
+
+import React, { useRef, useEffect } from 'react';
+import KPICard from '../../../shared/components/KPICard';
+import { useCompanyHistory } from '../hooks/useAdminHooks';
+import { useAdminStore } from '../store/adminStore';
+import { Building2, Users, UserCheck, Percent, Plus } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { gsap } from '../../../animations/gsap.config';
+import { Link, useNavigate } from 'react-router-dom';
+
+const COLORS = ['#6366F1', '#10B981', '#F59E0B', '#F43F5E', '#8B5CF6', '#EC4899', '#0EA5E9'];
+
+const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, percent, name, value }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius * 1.15;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  return (
+    <text x={x} y={y} fill="#94A3B8" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize="11px">
+      {`${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+    </text>
+  );
+};
+
+const AdminDashboard = () => {
+  const navigate = useNavigate(); // ✅ FIXED (inside component)
+
+  const { data } = useCompanyHistory();
+  const { isMatchingAlgorithmRunning } = useAdminStore();
+  const chartsRef = useRef(null);
+
+  const history = data?.data?.history || [];
+
+  const totalStudents = data?.data?.totalStudents || 0;
+  const companiesAdded = history.length;
+  const studentsPlaced = history.reduce((acc, c) => acc + (c.numberOfStudentsPlaced || 0), 0);
+  const placementRate = totalStudents > 0 ? Math.round((studentsPlaced / totalStudents) * 100) : 0;
+
+  const barData = history.map(c => ({
+    name: c.companyName,
+    placed: c.numberOfStudentsPlaced || 0
+  })).slice(0, 5);
+
+  const rawPieData = data?.data?.departmentSpread || [];
+  const pieDataMap = rawPieData.reduce((acc, curr) => {
+    const name = curr.name ? curr.name.toUpperCase() : 'UNKNOWN';
+    if (!acc[name]) {
+      acc[name] = { ...curr, name, value: 0 };
+    }
+    acc[name].value += (curr.value || 0);
+    return acc;
+  }, {});
+  const pieData = Object.values(pieDataMap);
+
+  useEffect(() => {
+    if (chartsRef.current) {
+      const charts = chartsRef.current.querySelectorAll('.chart-container');
+      gsap.fromTo(
+        charts,
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: { trigger: chartsRef.current, start: "top 85%" }
+        }
+      );
+    }
+  }, []);
+
+  return (
+    <div className="space-y-8 relative">
+      <style>{`@keyframes progress { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
+
+      {isMatchingAlgorithmRunning && (
+        <div className="bg-indigo-600/20 border border-indigo-500/30 rounded-xl p-4 flex items-center shadow-lg shadow-indigo-500/10 mb-6">
+          <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center mr-4 animate-pulse">
+            <div className="w-3 h-3 rounded-full bg-indigo-400" />
+          </div>
+          <div>
+            <h4 className="text-indigo-400 font-bold">Matching Algorithm Running...</h4>
+            <p className="text-sm text-indigo-300/80">Analyzing student profiles against new company requirements.</p>
+          </div>
+          <div className="ml-auto w-1/3 h-1 bg-surface rounded-full overflow-hidden">
+            <div className="h-full bg-indigo-500 w-full" style={{ animation: 'progress 2s ease-in-out infinite' }} />
+          </div>
+        </div>
+      )}
+
+      {/* HEADER + BUTTON */}
+      <div className="flex justify-between items-end mt-10">
+        <div className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-light font-inter">
+            Placement Analytics
+          </h1>
+          <p className="text-neutral-300 w-full max-w-xl">
+            Overview of placement performance and recent company activities.
+          </p>
+        </div>
+
+        {/* ✅ NEW BUTTON */}
+        <button
+          onClick={() => navigate('/analytics')}
+          className="bg-indigo-500 hover:bg-indigo-600 px-5 py-3 rounded-xl text-white font-semibold shadow-md"
+        >
+          View Full Analytics
+        </button>
+
+        <Link to="/admin/companies" className="hidden md:flex items-center space-x-2 bg-gradient-to-r from-accent-gold to-accent-red text-light px-6 py-3 rounded-2xl font-bold shadow-card hover:shadow-glow interactive">
+          <Plus className="w-5 h-5" />
+          <span>Add Company</span>
+        </Link>
+      </div>
+
+      {/* KPI CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+        <KPICard title="Total Students" value={totalStudents} icon={Users} colorClass="bg-brand-violet" delay={0.1} />
+        <KPICard title="Companies Visited" value={companiesAdded} icon={Building2} colorClass="bg-accent-gold" delay={0.2} />
+        <KPICard title="Students Placed" value={studentsPlaced} icon={UserCheck} colorClass="bg-emerald-500" delay={0.3} />
+        {/*<KPICard title="Placement Rate" value={`${placementRate}%`} icon={Percent} colorClass="bg-indigo-500" delay={0.4} />*/}
+      </div>
+
+      {/* CHARTS */}
+      <div ref={chartsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10">
+        <div className="chart-container glass-card p-6 h-96 interactive">
+          <h3 className="text-lg font-bold text-light mb-6">Top Recruiting Companies</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={barData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1E2633" vertical={false} />
+              <XAxis dataKey="name" stroke="#94A3B8" />
+              <YAxis stroke="#94A3B8" />
+              <Tooltip />
+              <Bar dataKey="placed" fill="#6366F1" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="chart-container glass-card p-6 h-96 interactive">
+          <h3 className="text-lg font-bold text-light mb-6">Department Placement Spread</h3>
+          <ResponsiveContainer width="100%" height="80%">
+            <PieChart>
+              <Pie data={pieData} dataKey="value">
+                {pieData.map((entry, index) => (
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

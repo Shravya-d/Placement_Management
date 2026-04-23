@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-    BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Legend, 
-    LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer 
+import {
+    BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Legend,
+    LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
 import { Loader2, TrendingUp, Users, Building, Activity, Target } from 'lucide-react';
-import { 
-    usePlacementRate, useDepartmentsStats, useCompanyStats, 
-    useFunnelStats, useTopSkills 
+import {
+    usePlacementRate, useDepartmentsStats, useCompanyStats,
+    useFunnelStats, useTopSkills
 } from '../hooks/useAnalyticsHooks';
 
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
@@ -14,6 +14,7 @@ const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
 
 const AnalyticsDashboard = () => {
     const { data: rateData, isLoading: rateLoading } = usePlacementRate();
+    console.log("rateData:", rateData);
     const { data: deptData, isLoading: deptLoading } = useDepartmentsStats();
     const { data: companyData, isLoading: companyLoading } = useCompanyStats();
     const { data: funnelData, isLoading: funnelLoading } = useFunnelStats();
@@ -29,8 +30,19 @@ const AnalyticsDashboard = () => {
             </div>
         );
     }
+    if (!rateData || !rateData.data) {
+        return <p>Loading...</p>;
+    }
 
-    const { total, placedCount, unplacedCount, placementPercentage, yearlyTrends } = rateData?.data || {};
+    console.log("Placement API Response:", rateData);
+
+    // Backend returns data inside data.data for placement stats
+    const placementData = rateData?.data;
+    const placementPercentage = placementData?.placementPercentage || 0;
+    const total = placementData?.totalStudents || 0;
+    const placedCount = placementData?.placedStudents || 0;
+    const yearlyTrends = placementData?.yearlyTrends || [];
+
     const departments = deptData?.data?.departments || [];
     const companies = companyData?.data?.companyStats || [];
     const funnel = funnelData?.data?.funnel || [];
@@ -52,7 +64,7 @@ const AnalyticsDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="glass-card p-6 flex flex-col items-center text-center">
                     <TrendingUp className="w-8 h-8 text-emerald-400 mb-2" />
-                    <span className="text-2xl font-bold">{placementPercentage}%</span>
+                    <span className="text-2xl font-bold">{placementPercentage ?? 0}%</span>
                     <span className="text-sm text-text-muted">Placement Rate</span>
                 </div>
                 <div className="glass-card p-6 flex flex-col items-center text-center">

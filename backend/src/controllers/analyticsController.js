@@ -3,7 +3,7 @@ const Student = require('../models/Student');
 const Alumni = require('../models/Alumni');
 const catchAsync = require('../utils/catchAsync');
 
-exports.getPlacementRate = catchAsync(async (req, res, next) => {
+/*exports.getPlacementRate = catchAsync(async (req, res, next) => {
     const unplacedCount = await Student.countDocuments();
     const placedCount = await Alumni.countDocuments();
     const total = unplacedCount + placedCount;
@@ -34,6 +34,60 @@ exports.getPlacementRate = catchAsync(async (req, res, next) => {
             yearlyTrends: yearly
         }
     });
+});
+*/
+
+exports.getPlacementRate = catchAsync(async (req, res, next) => {
+    try {
+        // Count unplaced students
+        const unplacedStudents = await Student.countDocuments();
+
+        // Count placed students
+        const placedStudents = await Alumni.countDocuments();
+
+        // 🔍 DEBUG: Fetch all alumni docs
+        const allAlumni = await Alumni.find();
+
+        // Total students
+        const totalStudents = unplacedStudents + placedStudents;
+
+        // 🔍 DEBUG LOGS
+        console.log("===== DEBUG Placement Stats =====");
+        console.log("Unplaced Students:", unplacedStudents);
+        console.log("Placed Students (count):", placedStudents);
+        console.log("All Alumni Docs:", allAlumni);
+        console.log("Total Students:", totalStudents);
+
+        const rawPercentage =
+            totalStudents === 0
+                ? 0
+                : (placedStudents / totalStudents) * 100;
+
+        console.log("Raw Placement %:", rawPercentage);
+        console.log("=================================");
+
+        const placementPercentage =
+            totalStudents === 0
+                ? 0
+                : Number(rawPercentage.toFixed(2));
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                totalStudents,
+                placedStudents,
+                unplacedStudents,
+                placementPercentage
+            }
+        });
+
+    } catch (error) {
+        console.error("ERROR in getPlacementRate:", error);
+        res.status(500).json({
+            status: 'error',
+            message: error.message
+        });
+    }
 });
 
 exports.getDepartmentsStats = catchAsync(async (req, res, next) => {
@@ -88,11 +142,11 @@ exports.getFunnelStats = catchAsync(async (req, res, next) => {
     const stats = await PlacementDept.aggregate([
         { $unwind: "$companies" },
         { $unwind: "$companies.applicants" },
-        { 
-            $group: { 
-                _id: "$companies.applicants.status", 
-                count: { $sum: 1 } 
-            } 
+        {
+            $group: {
+                _id: "$companies.applicants.status",
+                count: { $sum: 1 }
+            }
         }
     ]);
 
@@ -126,25 +180,25 @@ exports.getTopSkillsInDemand = catchAsync(async (req, res, next) => {
     const stats = await PlacementDept.aggregate([
         { $unwind: "$companies" },
         { $unwind: "$companies.jdSkills" },
-        { 
-            $project: { 
-                skill: { $toLower: { $trim: { input: "$companies.jdSkills" } } } 
-            } 
+        {
+            $project: {
+                skill: { $toLower: { $trim: { input: "$companies.jdSkills" } } }
+            }
         },
-        { 
-            $group: { 
-                _id: "$skill", 
-                demand: { $sum: 1 } 
-            } 
+        {
+            $group: {
+                _id: "$skill",
+                demand: { $sum: 1 }
+            }
         },
         { $sort: { demand: -1 } },
         { $limit: 10 },
-        { 
-            $project: { 
-                skill: "$_id", 
-                demand: 1, 
-                _id: 0 
-            } 
+        {
+            $project: {
+                skill: "$_id",
+                demand: 1,
+                _id: 0
+            }
         }
     ]);
 
