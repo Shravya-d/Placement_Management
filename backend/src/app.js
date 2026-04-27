@@ -23,6 +23,7 @@ const placementDeptRoutes = require('./routes/placementDeptRoutes');
 const alumniRoutes = require('./routes/alumniRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const courseRoutes = require('./routes/courseRoutes');
+const interviewRoutes = require('./routes/interviewRoutes');
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -31,6 +32,7 @@ app.use('/api/placement', placementDeptRoutes);
 app.use('/api/alumni', alumniRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/interview', interviewRoutes);
 
 // Main route
 app.get('/', (req, res) => {

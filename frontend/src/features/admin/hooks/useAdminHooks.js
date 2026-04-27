@@ -100,3 +100,43 @@ export const usePlacements = () => {
     queryFn: adminApi.getPlacements
   });
 };
+
+export const useAssignInterview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: adminApi.assignInterview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['company-applicants'] });
+      toast.success('Interview slot assigned successfully!', {
+        className: 'border-l-4 border-l-emerald-500',
+        duration: 3000
+      });
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Failed to assign interview', {
+        className: 'border-l-4 border-l-rose-500'
+      });
+    }
+  });
+};
+
+export const useUpdateInterviewStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: adminApi.updateInterviewStatus,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['company-applicants'] });
+      toast.success(`Interview marked as ${variables.status}.`, {
+        className: 'border-l-4 border-l-emerald-500',
+        duration: 3000
+      });
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Failed to update interview status', {
+        className: 'border-l-4 border-l-rose-500'
+      });
+    }
+  });
+};

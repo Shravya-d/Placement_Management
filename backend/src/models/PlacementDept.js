@@ -11,7 +11,7 @@ const applicantSchema = new mongoose.Schema({
     resume: String,
     status: {
         type: String,
-        enum: ['APPLIED', 'SELECTED', 'REJECTED'],
+        enum: ['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED', 'SELECTED', 'REJECTED'],
         default: 'APPLIED'
     },
     appliedAt: {

@@ -20,5 +20,9 @@ export const studentApi = {
   updateProfile: async (data) => {
     const res = await axiosInstance.patch('/student/profile', data);
     return res.data;
+  },
+  getStudentInterviews: async (studentId) => {
+    const res = await axiosInstance.get(`/interview/student/${studentId}`);
+    return res.data;
   }
 };

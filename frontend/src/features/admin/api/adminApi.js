@@ -32,5 +32,13 @@ export const adminApi = {
   updateProfile: async (data) => {
     const res = await axiosInstance.patch('/placement/profile', data);
     return res.data;
+  },
+  assignInterview: async (data) => {
+    const res = await axiosInstance.post('/interview/assign', data);
+    return res.data;
+  },
+  updateInterviewStatus: async (data) => {
+    const res = await axiosInstance.put('/interview/status', data);
+    return res.data;
   }
 };

@@ -12,6 +12,7 @@ export const useLogin = () => {
     mutationFn: authApi.login,
     onSuccess: (data) => {
       const userData = data.data.user;
+      localStorage.setItem('token', data.token);
       setUser(userData);
       toast.success('Successfully logged in!', {
         className: 'border-l-4 border-l-emerald-500'
@@ -34,6 +35,7 @@ export const useRegisterStudent = () => {
   return useMutation({
     mutationFn: authApi.registerStudent,
     onSuccess: (data) => {
+      localStorage.setItem('token', data.token);
       setUser(data.data.user);
       toast.success('Registration successful! Welcome!', {
         className: 'border-l-4 border-l-emerald-500'
@@ -55,6 +57,7 @@ export const useRegisterAdmin = () => {
   return useMutation({
     mutationFn: authApi.registerAdmin,
     onSuccess: (data) => {
+      localStorage.setItem('token', data.token);
       setUser(data.data.user);
       toast.success('Admin account created. Only one admin account is permitted system-wide.', {
         className: 'border-l-4 border-l-amber-500',

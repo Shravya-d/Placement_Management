@@ -13,7 +13,10 @@ export const useAuthStore = create(
         isAuthenticated: !!user, 
         role: user?.role || user?.adminDetails?.role || user?.studentData?.role || null 
       }),
-      logout: () => set({ user: null, isAuthenticated: false, role: null })
+      logout: () => {
+        localStorage.removeItem('token');
+        set({ user: null, isAuthenticated: false, role: null });
+      }
     }),
     {
       name: 'placementsync-auth-storage',
