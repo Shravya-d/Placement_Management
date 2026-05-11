@@ -20,6 +20,9 @@ const SelectionCenter = () => {
 
   const companies = data?.data?.companies || [];
 
+  console.log("=== Debug: Selection Center ===");
+  console.log("All Companies:", companies);
+
   const handlePlace = (companyId, studentId) => {
     if (window.confirm("Are you sure you want to mark this applicant as PLACED? They will be migrated to the Alumni list and notified via email.")) {
       selectStudents({ companyId, studentIds: [studentId] });
@@ -85,6 +88,9 @@ const SelectionCenter = () => {
             const activeApplicants = company.applicants.filter(app =>
               ['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED'].includes(app.status)
             );
+
+            console.log(`Company: ${company.companyName} | Total Applicants: ${company.applicants.length} | Active Applicants: ${activeApplicants.length}`);
+            console.log("Applicant Statuses:", company.applicants.map(app => ({ name: app.studentId?.name, status: app.status })));
 
             return (
               <div key={company._id} className="glass-card overflow-hidden">

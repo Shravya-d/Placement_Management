@@ -285,7 +285,7 @@ exports.getCompanyApplicants = catchAsync(async (req, res, next) => {
 
     const companiesWithApplicants = dept.companies.map(company => {
         const activeApplicants = company.applicants
-            .filter(app => app.status === 'APPLIED' && app.studentId)
+            .filter(app => ['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED'].includes(app.status) && app.studentId)
             .map(app => {
                 const semanticScore = similarityService.calculateSemanticScore(app.studentId.skills || [], company.jdSkills || []);
                 
