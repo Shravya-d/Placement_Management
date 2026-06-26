@@ -11,7 +11,7 @@ const applicantSchema = new mongoose.Schema({
     resume: String,
     status: {
         type: String,
-        enum: ['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED', 'SELECTED', 'REJECTED'],
+        enum: ['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED', 'SELECTED', 'REJECTED', 'CLOSED', 'POSITION_FILLED'],
         default: 'APPLIED'
     },
     appliedAt: {
@@ -71,6 +71,19 @@ const companySchema = new mongoose.Schema({
     anonymousMode: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: String,
+        enum: ['ACTIVE', 'FILLED', 'CLOSED'],
+        default: 'ACTIVE'
+    },
+    stipend: {
+        type: String,
+        default: ''
+    },
+    ctc: {
+        type: String,
+        default: ''
     },
     applicants: [applicantSchema],
     selectedStudents: [{

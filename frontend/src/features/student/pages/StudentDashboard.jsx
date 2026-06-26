@@ -21,15 +21,7 @@ const StudentDashboard = () => {
   const interviews = interviewsData?.data?.interviews || [];
   
 
-  const userSkills = user?.skills?.map(s => s.trim().toLowerCase()) || [];
-  const userBranch = (user?.branch || '').trim().toLowerCase();
-  
-  const eligibleCount = companies.filter(c => {
-    const hasRequiredSkill = c.jdSkills?.some(skill => userSkills.includes(skill.trim().toLowerCase()));
-    const hasAllowedBranch = !c.branchesAllowed || c.branchesAllowed.length === 0 || c.branchesAllowed.some(b => b.trim().toLowerCase() === userBranch);
-    const hasNoBacklogsIfRequired = c.backlog === false ? !user?.backlogs : true;
-    return parseFloat(user?.cgpa || 0) >= parseFloat(c.cgpaCriteria || 0) && hasRequiredSkill && hasAllowedBranch && hasNoBacklogsIfRequired;
-  }).length;
+  const eligibleCount = companies.filter(c => c.isEligible).length;
 
   const appliedCount = user?.applications?.length || 0;
   const placementStatus = user?.placementStatus || 'Active';

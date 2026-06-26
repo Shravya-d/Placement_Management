@@ -10,6 +10,7 @@ router.use(auth.protect);
 router.use(role.restrictTo('admin'));
 
 router.post('/companies', placementDeptController.addCompany);
+router.patch('/companies/:companyId', placementDeptController.updateCompany);
 router.get('/companies/applicants', placementDeptController.getCompanyApplicants);
 router.get('/placements', placementDeptController.getPlacements);
 router.post('/companies/:companyId/select', placementDeptController.selectStudents);

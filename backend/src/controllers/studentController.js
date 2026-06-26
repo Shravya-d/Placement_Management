@@ -3,6 +3,7 @@ const PlacementDept = require('../models/PlacementDept');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 const emailService = require('../services/emailService');
+const { isSkillMatch } = require('../services/similarityService');
 
 exports.updateProfile = catchAsync(async (req, res, next) => {
     // Filter out unwanted fields
@@ -36,27 +37,43 @@ exports.getEligibleCompanies = catchAsync(async (req, res, next) => {
         });
     }
 
-    // Force real-time sync of eligibility before returning
+    // Force real-time sync of eligibility in backend matching
     const matchingService = require('../services/matchingService');
     await matchingService.evaluateStudentForExistingCompanies(student);
     
     // Fetch student again in case evaluateStudentForExistingCompanies updated the array
     student = await Student.findById(req.user.id);
 
-    if (!student.eligibleCompanies || student.eligibleCompanies.length === 0) {
-        return res.status(200).json({
-            status: 'success',
-            data: { companies: [] }
+    // Filter to only active companies (deadline has not passed)
+    const activeCompanies = dept.companies.filter(c => {
+        if (c.applicationDeadline && Date.now() > new Date(c.applicationDeadline).getTime()) {
+            return false;
+        }
+        return true;
+    });
+
+    const eligibilityService = require('../services/eligibilityService');
+    const decoratedCompanies = [];
+
+    for (const company of activeCompanies) {
+        const eligibility = await eligibilityService.evaluateStudentEligibility(student, company);
+        decoratedCompanies.push({
+            ...company.toObject(),
+            isEligible: eligibility.isEligible,
+            overallMatchPercentage: eligibility.overallMatchPercentage,
+            skillMatchScore: eligibility.skillMatchScore,
+            matchedSkills: eligibility.matchedSkills,
+            missingSkills: eligibility.missingSkills,
+            branchEligible: eligibility.branchEligible,
+            backlogEligible: eligibility.backlogEligible,
+            eligibilityReasons: eligibility.reasons,
+            eligibilityReason: eligibility.reasons
         });
     }
 
-    const eligibleCompanies = dept.companies.filter(c =>
-        student.eligibleCompanies.some(id => id.toString() === c._id.toString())
-    );
-
     res.status(200).json({
         status: 'success',
-        data: { companies: eligibleCompanies }
+        data: { companies: decoratedCompanies }
     });
 });
 
@@ -84,18 +101,19 @@ exports.applyToCompany = catchAsync(async (req, res, next) => {
 
     const company = dept.companies.id(companyId);
 
-    // Calculate match
-    const studentSkills = new Set((student.skills || []).map(s => s.trim().toLowerCase()));
-    let matchedSkillsCount = 0;
-    company.jdSkills.forEach(skill => {
-        if (studentSkills.has(skill.trim().toLowerCase())) {
-            matchedSkillsCount++;
-        }
-    });
-
-    if (matchedSkillsCount === 0) {
-        return next(new AppError('You do not have any of the required skills for this role.', 400));
+    // Check if positions are already filled or company is closed
+    const selectedCount = company.selectedStudents ? company.selectedStudents.length : 0;
+    if (company.status === 'FILLED' || company.status === 'CLOSED' || (company.numberOfCandidates && selectedCount >= company.numberOfCandidates)) {
+        return next(new AppError('This company has already filled all available positions.', 400));
     }
+
+    const eligibilityService = require('../services/eligibilityService');
+    const eligibility = await eligibilityService.evaluateStudentEligibility(student, company);
+    if (!eligibility.isEligible) {
+        return next(new AppError('You are not eligible for this company', 403));
+    }
+
+    const matchedSkillsCount = eligibility.matchedSkills.length;
 
     if (company.applicationDeadline && Date.now() > new Date(company.applicationDeadline).getTime()) {
         return next(new AppError('The application deadline for this company has already passed.', 400));
@@ -157,6 +175,14 @@ exports.getCompanyEligibility = catchAsync(async (req, res, next) => {
     
     res.status(200).json({
         status: 'success',
-        data: breakdown
+        data: {
+            ...breakdown,
+            companyName: company.companyName,
+            role: company.role,
+            stipend: company.stipend,
+            ctc: company.ctc,
+            jdSkills: company.jdSkills,
+            cgpaCriteria: company.cgpaCriteria
+        }
     });
 });

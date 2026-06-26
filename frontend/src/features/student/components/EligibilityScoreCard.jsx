@@ -2,6 +2,24 @@ import React from 'react';
 import { useEligibility } from '../hooks/useEligibility';
 import { Loader2, CheckCircle2, XCircle, GraduationCap, Wrench, BookOpen, ExternalLink, Percent } from 'lucide-react';
 
+const formatStipend = (stipend) => {
+  if (!stipend || stipend.trim() === '') return 'N/A';
+  let s = stipend.trim();
+  if (/^\d+$/.test(s)) {
+    return `₹${Number(s).toLocaleString('en-IN')}/month`;
+  }
+  return s;
+};
+
+const formatCTC = (ctc) => {
+  if (!ctc || ctc.trim() === '') return 'N/A';
+  let c = ctc.trim();
+  if (/^\d+(\.\d+)?$/.test(c)) {
+    return `${c} LPA`;
+  }
+  return c;
+};
+
 const CourseRecommendations = ({ recommendedCourses }) => {
     if (!recommendedCourses || recommendedCourses.length === 0) return null;
     return (
@@ -57,7 +75,8 @@ const EligibilityScoreCard = ({ companyId }) => {
     const { 
         cgpaScore, matchedSkills, missingSkills, recommendedCourses,
         branchEligible, backlogEligible, requiredCgpa,
-        overallMatchPercentage, isEligible
+        overallMatchPercentage, isEligible,
+        role, stipend, ctc, jdSkills, companyName
     } = breakdown;
 
     const totalSkills = matchedSkills.length + missingSkills.length;
@@ -79,6 +98,25 @@ const EligibilityScoreCard = ({ companyId }) => {
                 }`}>
                     {isEligible ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
                     <span>{overallMatchPercentage}% Match</span>
+                </div>
+            </div>
+
+            <div className="mb-6 p-4 bg-surface-dark/50 border border-neutral-700/30 rounded-2xl grid grid-cols-2 md:grid-cols-4 gap-4 stagger-item">
+                <div>
+                    <span className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold block">Role</span>
+                    <span className="text-sm text-white font-semibold">{role || 'N/A'}</span>
+                </div>
+                <div>
+                    <span className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold block">Stipend</span>
+                    <span className="text-sm text-white font-semibold">{formatStipend(stipend)}</span>
+                </div>
+                <div>
+                    <span className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold block">CTC</span>
+                    <span className="text-sm text-white font-semibold">{formatCTC(ctc)}</span>
+                </div>
+                <div>
+                    <span className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold block">Required CGPA</span>
+                    <span className="text-sm text-white font-semibold">{requiredCgpa ? `${requiredCgpa}` : 'None'}</span>
                 </div>
             </div>
 
@@ -122,10 +160,36 @@ const EligibilityScoreCard = ({ companyId }) => {
                     </div>
                 </div>
 
-                {/* Missing Skills Pills */}
-                {missingSkills.length > 0 && (
+                {/* Skills Breakdown */}
+                {jdSkills && jdSkills.length > 0 && (
                     <div className="pt-2">
-                        <p className="text-xs text-text-muted mb-2">Missing Required Skills:</p>
+                        <p className="text-xs text-text-muted mb-2 font-semibold uppercase tracking-wider">Required Skills</p>
+                        <div className="flex flex-wrap gap-1.5">
+                            {jdSkills.map(s => (
+                                <span key={s} className="px-2 py-1 text-[10px] uppercase tracking-wider rounded bg-surface border border-neutral-700/50 text-light">
+                                    {s}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {matchedSkills && matchedSkills.length > 0 && (
+                    <div className="pt-2">
+                        <p className="text-xs text-emerald-400 mb-2 font-semibold uppercase tracking-wider">Matched Skills</p>
+                        <div className="flex flex-wrap gap-1.5">
+                            {matchedSkills.map(s => (
+                                <span key={s} className="px-2 py-1 text-[10px] uppercase tracking-wider rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    {s}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {missingSkills && missingSkills.length > 0 && (
+                    <div className="pt-2">
+                        <p className="text-xs text-rose-400 mb-2 font-semibold uppercase tracking-wider">Missing Skills</p>
                         <div className="flex flex-wrap gap-1.5">
                             {missingSkills.map(s => (
                                 <span key={s} className="px-2 py-1 text-[10px] uppercase tracking-wider rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">

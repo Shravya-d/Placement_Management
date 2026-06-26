@@ -18,6 +18,16 @@ exports.assignInterview = catchAsync(async (req, res, next) => {
         return next(new AppError('Student has not applied to this company', 400));
     }
 
+    // Check if company is active
+    const dept = await PlacementDept.findOne({ 'companies._id': companyId });
+    if (!dept) {
+        return next(new AppError('Company not found', 404));
+    }
+    const company = dept.companies.id(companyId);
+    if (company.status === 'FILLED' || company.status === 'CLOSED') {
+        return next(new AppError('The recruitment process for this company is already over.', 400));
+    }
+
     // 2. Check for existing active interview for this company
     const existingInterview = await Interview.findOne({
         studentId,

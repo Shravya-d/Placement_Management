@@ -48,7 +48,7 @@ exports.sendApplicationConfirmation = async (student, company) => {
         subject: `Application Received: ${company.companyName}`,
         message: `Hello ${student.name},\n\nYour application for ${company.role} at ${company.companyName} has been received.
         Thanks for showing your interest in ${company.companyName}. Now, as the next step of the application process, you are hereby advised to undergo our Computer Based Online Recruitment Test.
-        The test will be scheduled on 16th April 2026. Follow the instructions below to access the test:\n\n1. Log in to your dashboard on the placement portal.\n2. Navigate to the "Online Assessments" section.\n3. Find the assessment for ${company.companyName} and click "Start Test".\n\nPlease ensure you have a stable internet connection and a quiet environment for the duration of the test. The test will consist of multiple-choice questions covering relevant topics for the role you applied for.\n\nBest of luck with your preparation!`
+        The test will be scheduled . Follow the instructions below to access the test:\n\n1. Log in to your dashboard on the placement portal.\n2. Navigate to the "Online Assessments" section.\n3. Find the assessment for ${company.companyName} and click "Start Test".\n\nPlease ensure you have a stable internet connection and a quiet environment for the duration of the test. The test will consist of multiple-choice questions covering relevant topics for the role you applied for.\n\nBest of luck with your preparation!`
     });
 };
 

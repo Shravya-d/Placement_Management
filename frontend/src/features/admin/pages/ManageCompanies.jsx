@@ -7,7 +7,7 @@ import { gsap } from '../../../animations/gsap.config';
 import { 
   Building2, Briefcase, Wrench, Award, 
   MapPin, BookOpen, Users, Calendar, FileText,
-  Loader2, AlertCircle, Plus, ChevronRight, CheckCircle2, Clock
+  Loader2, AlertCircle, Plus, ChevronRight, CheckCircle2, Clock, DollarSign
 } from 'lucide-react';
 import { cn } from '../../../shared/utils/cn';
 
@@ -21,7 +21,9 @@ const companySchema = z.object({
   numberOfCandidates: z.preprocess(v => v === '' ? undefined : Number(v), z.number().min(1, "Required").optional()),
   visitDate: z.string().min(1, "Visit date required"),
   applicationDeadline: z.string().min(1, "Deadline required").refine(date => new Date(date).getTime() > Date.now(), { message: "Must be a future date" }),
-  description: z.string().min(10, "Description too short")
+  description: z.string().min(10, "Description too short"),
+  stipend: z.string().optional().default(''),
+  ctc: z.string().optional().default('')
 });
 
 const CustomInput = ({ label, icon: Icon, error, register, name, className, ...props }) => (
@@ -207,6 +209,11 @@ const ManageCompanies = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-end">
                   <CustomInput label="Number of Candidates Required" type="number" name="numberOfCandidates" register={register} error={errors.numberOfCandidates} placeholder="Waitlist size (e.g. 10)" icon={Users} />
                   <CustomInput label="Minimum CGPA" type="number" step="0.01" name="cgpaCriteria" register={register} error={errors.cgpaCriteria} placeholder="7.50" icon={Award} />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <CustomInput label="Stipend (₹ per month)" name="stipend" register={register} error={errors.stipend} placeholder="e.g. 30000" icon={DollarSign} />
+                  <CustomInput label="CTC (LPA)" name="ctc" register={register} error={errors.ctc} placeholder="e.g. 9 or 9 LPA" icon={DollarSign} />
                 </div>
 
                 <div className="grid grid-cols-1 gap-5">

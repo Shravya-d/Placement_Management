@@ -5,6 +5,10 @@ export const adminApi = {
     const res = await axiosInstance.post('/placement/companies', data);
     return res.data;
   },
+  updateCompany: async ({ companyId, data }) => {
+    const res = await axiosInstance.patch(`/placement/companies/${companyId}`, data);
+    return res.data;
+  },
   selectStudents: async ({ companyId, studentIds }) => {
     const res = await axiosInstance.post(`/placement/companies/${companyId}/select`, { studentIds });
     return res.data;

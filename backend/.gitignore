@@ -1,2 +1,10 @@
 node_modules
 .env
+test_visibility_and_compensation.js
+testPagination.js
+e2e_test.js
+e2e_results.json
+e2e_test_with_validation.js
+test_company.js
+validation_results.json
+src\scratch_admin_check.js

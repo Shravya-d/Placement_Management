@@ -1,5 +1,6 @@
 const Student = require('../models/Student');
 const emailService = require('./emailService');
+const eligibilityService = require('./eligibilityService');
 
 exports.matchStudentsToCompany = async (company) => {
     // 1. Fetch NOT_PLACED students with projected fields to save memory
@@ -9,44 +10,19 @@ exports.matchStudentsToCompany = async (company) => {
 
     let eligibleStudents = [];
 
-    students.forEach(student => {
-        if (company.applicationDeadline && Date.now() > new Date(company.applicationDeadline).getTime()) {
-            return;
-        }
+    if (company.applicationDeadline && Date.now() > new Date(company.applicationDeadline).getTime()) {
+        return;
+    }
 
-        // Evaluate base criteria ONLY if the company specified them
-        if (company.cgpaCriteria !== undefined && company.cgpaCriteria !== null) {
-            if (student.cgpa < company.cgpaCriteria) return;
-        }
-
-        if (company.backlog !== undefined && company.backlog !== null) {
-            if (company.backlog === false && student.backlogs === true) return;
-        }
-
-        // Case-insensitive & trimmed branches check
-        if (company.branchesAllowed && company.branchesAllowed.length > 0) {
-            const branchesAllowedLC = company.branchesAllowed.map(b => b.trim().toLowerCase());
-            if (!branchesAllowedLC.includes((student.branch || '').trim().toLowerCase())) return;
-        }
-
-        // Compare jdSkills vs student.skills
-        const studentSkills = new Set((student.skills || []).map(s => s.trim().toLowerCase()));
-        let matchedSkillsCount = 0;
-
-        company.jdSkills.forEach(skill => {
-            if (studentSkills.has(skill.trim().toLowerCase())) {
-                matchedSkillsCount++;
-            }
-        });
-
-        // Add to eligible list only if matches > 0 (MUST have at least one required skill)
-        if (matchedSkillsCount === 0) return;
+    for (const student of students) {
+        const eligibility = await eligibilityService.evaluateStudentEligibility(student, company, true);
+        if (!eligibility.isEligible) continue;
 
         eligibleStudents.push({
             student,
-            matchedSkillsCount
+            matchedSkillsCount: eligibility.matchedSkills.length
         });
-    });
+    }
 
     // Sort: highest matchedSkillsCount, then CGPA
     eligibleStudents.sort((a, b) => {
@@ -81,38 +57,13 @@ exports.evaluateStudentForExistingCompanies = async (student) => {
     // We want to replace the student's eligible array with the freshly evaluated list
     const newEligibleCompanies = [];
 
-    const studentSkills = new Set((student.skills || []).map(s => s.toLowerCase()));
-
     for (const company of dept.companies) {
         if (company.applicationDeadline && Date.now() > new Date(company.applicationDeadline).getTime()) {
             continue;
         }
 
-
-        if (company.cgpaCriteria !== undefined && company.cgpaCriteria !== null) {
-            if (student.cgpa < company.cgpaCriteria) continue;
-        }
-
-        if (company.backlog !== undefined && company.backlog !== null) {
-            if (company.backlog === false && student.backlogs === true) continue;
-        }
-
-        if (company.branchesAllowed && company.branchesAllowed.length > 0) {
-            const branchesAllowedLC = company.branchesAllowed.map(b => b.trim().toLowerCase());
-            if (!branchesAllowedLC.includes((student.branch || '').trim().toLowerCase())) continue;
-        }
-
-
-        let matchedSkillsCount = 0;
-        company.jdSkills.forEach(skill => {
-            if (studentSkills.has(skill.trim().toLowerCase())) {
-                matchedSkillsCount++;
-            }
-        });
-
-
-        if (matchedSkillsCount === 0) continue;
-
+        const eligibility = await eligibilityService.evaluateStudentEligibility(student, company, true);
+        if (!eligibility.isEligible) continue;
 
         newEligibleCompanies.push(company._id);
     }

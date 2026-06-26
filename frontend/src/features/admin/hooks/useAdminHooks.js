@@ -39,6 +39,8 @@ export const useSelectStudents = () => {
     mutationFn: adminApi.selectStudents,
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['company-history'] });
+      queryClient.invalidateQueries({ queryKey: ['company-applicants'] });
+      queryClient.invalidateQueries({ queryKey: ['eligible-companies'] });
       toast.success(`${variables.studentIds.length} students placed! Offer letters sent and migration complete.`, {
         className: 'border-l-4 border-l-emerald-500',
         duration: 5000

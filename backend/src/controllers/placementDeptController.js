@@ -54,7 +54,9 @@ exports.addCompany = catchAsync(async (req, res, next) => {
         numberOfCandidates: req.body.numberOfCandidates,
         visitDate: req.body.visitDate,
         applicationDeadline: req.body.applicationDeadline,
-        description: req.body.description
+        description: req.body.description,
+        stipend: req.body.stipend || '',
+        ctc: req.body.ctc || ''
     };
 
     dept.companies.push(newCompanyData);
@@ -73,6 +75,44 @@ exports.addCompany = catchAsync(async (req, res, next) => {
     });
 });
 
+exports.updateCompany = catchAsync(async (req, res, next) => {
+    const { companyId } = req.params;
+    let dept = await PlacementDept.findOne().select('+adminDetails.password');
+    if (!dept) {
+        return next(new AppError('Department not configured', 500));
+    }
+
+    const company = dept.companies.id(companyId);
+    if (!company) {
+        return next(new AppError('Company not found', 404));
+    }
+
+    const updatableFields = [
+        'companyName', 'role', 'jdSkills', 'cgpaCriteria', 'backlog', 
+        'branchesAllowed', 'numberOfCandidates', 'visitDate', 
+        'applicationDeadline', 'description', 'stipend', 'ctc'
+    ];
+
+    updatableFields.forEach(field => {
+        if (req.body[field] !== undefined) {
+            company[field] = req.body[field];
+        }
+    });
+
+    company.updatedAt = Date.now();
+    await dept.save({ validateBeforeSave: false });
+
+    // Trigger matching algorithm
+    await matchingService.matchStudentsToCompany(company);
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            company
+        }
+    });
+});
+
 exports.selectStudents = catchAsync(async (req, res, next) => {
     const { companyId } = req.params;
     const { studentIds } = req.body; // array of ObjectIds
@@ -81,6 +121,17 @@ exports.selectStudents = catchAsync(async (req, res, next) => {
     if (!dept) return next(new AppError('Company not found', 404));
 
     const company = dept.companies.id(companyId);
+
+    // Safeguard: Check if company is already filled/closed
+    if (company.status === 'FILLED' || company.status === 'CLOSED') {
+        return next(new AppError('This company has already filled all available positions.', 400));
+    }
+
+    // Safeguard: Check if selecting these students exceeds the company's vacancy limit
+    const currentSelectedCount = company.selectedStudents ? company.selectedStudents.length : 0;
+    if (company.numberOfCandidates && currentSelectedCount + studentIds.length > company.numberOfCandidates) {
+        return next(new AppError(`Selecting these candidates would exceed the company's required vacancies limit (${company.numberOfCandidates}).`, 400));
+    }
 
     const students = await Student.find({ _id: { $in: studentIds } });
 
@@ -121,6 +172,28 @@ exports.selectStudents = catchAsync(async (req, res, next) => {
 
         // 5. Email
         await emailService.sendSelectionEmail(student, company);
+    }
+
+    // Automatically Close Company & Update remaining applicants if filled
+    if (company.numberOfCandidates && company.selectedStudents.length >= company.numberOfCandidates) {
+        company.status = 'FILLED';
+
+        // Update all other remaining applicants to POSITION_FILLED
+        for (const applicant of company.applicants) {
+            if (['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED'].includes(applicant.status)) {
+                applicant.status = 'POSITION_FILLED';
+
+                // Update the student document in Student collection
+                const studentDoc = await Student.findById(applicant.studentId);
+                if (studentDoc) {
+                    const stApp = studentDoc.applications.find(a => a.companyId.toString() === companyId);
+                    if (stApp) {
+                        stApp.status = 'POSITION_FILLED';
+                        await studentDoc.save({ validateBeforeSave: false });
+                    }
+                }
+            }
+        }
     }
 
     await dept.save({ validateBeforeSave: false });
@@ -283,7 +356,9 @@ exports.getCompanyApplicants = catchAsync(async (req, res, next) => {
 
     const similarityService = require('../services/similarityService');
 
-    const companiesWithApplicants = dept.companies.map(company => {
+    const companiesWithApplicants = dept.companies
+        .filter(company => company.status !== 'FILLED' && company.status !== 'CLOSED')
+        .map(company => {
         const activeApplicants = company.applicants
             .filter(app => ['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED'].includes(app.status) && app.studentId)
             .map(app => {
@@ -336,6 +411,11 @@ exports.rejectStudents = catchAsync(async (req, res, next) => {
     if (!dept) return next(new AppError('Company not found', 404));
 
     const company = dept.companies.id(companyId);
+
+    // Safeguard: Check if company is already filled/closed
+    if (company.status === 'FILLED' || company.status === 'CLOSED') {
+        return next(new AppError('This company has already filled all available positions.', 400));
+    }
 
     const students = await Student.find({ _id: { $in: studentIds } });
 

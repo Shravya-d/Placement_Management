@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PlacementSync - Deep Technical & Architectural Handbook</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #e0e7ff;
+            --text-dark: #1f2937;
+            --text-light: #4b5563;
+            --text-muted: #9ca3af;
+            --bg-light: #f9fafb;
+            --border: #e5e7eb;
+            --code-bg: #f3f4f6;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background-color: #ffffff;
+            font-size: 13.5px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Cover Page styling */
+        .cover-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 85vh;
+            padding: 60px;
+            border-left: 8px solid var(--primary);
+            margin-bottom: 60px;
+            page-break-after: always;
+        }
+
+        .cover-title {
+            font-size: 44px;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .cover-subtitle {
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--text-light);
+            margin-bottom: 50px;
+            max-width: 700px;
+        }
+
+        .cover-meta {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .meta-item h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .meta-item p {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Table of Contents */
+        .toc-section {
+            page-break-after: always;
+            margin-bottom: 60px;
+        }
+
+        .toc-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 10px;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            display: flex;
+            justify-space: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+        }
+
+        .toc-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .toc-dots {
+            flex-grow: 1;
+            border-bottom: 1px dotted var(--text-muted);
+            margin: 0 10px;
+        }
+
+        .toc-page {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Generic Section styling */
+        section {
+            margin-bottom: 60px;
+            page-break-after: always;
+        }
+
+        section:last-child {
+            page-break-after: avoid;
+        }
+
+        h1.section-header {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 30px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: var(--text-light);
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Code formatting */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 25px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--code-bg);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 12.5px;
+            color: #d01337;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: var(--text-dark);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        th {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        /* Highlight Boxes */
+        .info-box {
+            background-color: var(--bg-light);
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+        }
+
+        .info-box h4 {
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .success-box {
+            background-color: #ecfdf5;
+            border-left: 4px solid var(--success);
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            color: #065f46;
+        }
+
+        .success-box h4 {
+            color: #047857;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .tech-card {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+        }
+
+        .tech-card-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tech-badge {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        /* Printing adjustments */
+        @media print {
+            body {
+                font-size: 12px;
+                color: #000;
+            }
+            .container {
+                padding: 0;
+                max-width: 100%;
+            }
+            .cover-page {
+                min-height: 90vh;
+                padding: 40px;
+            }
+            pre {
+                font-size: 10px;
+                page-break-inside: avoid;
+            }
+            tr, img, .tech-card, .info-box, .success-box {
+                page-break-inside: avoid;
+            }
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            z-index: 1000;
+        }
+
+        .print-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Print / Export as PDF</button>
+
+<div class="container">
+    
+    <!-- Cover Page -->
+    <div class="cover-page">
+        <div class="cover-title">PlacementSync</div>
+        <div class="cover-title" style="font-size: 30px; font-weight: 600; color: var(--text-light); margin-top: -15px;">Full-Pipeline Technical Architecture Manual</div>
+        <div class="cover-subtitle">
+            A comprehensive, deep-dive handbook detailing every technology, package, database schema, algorithm, and design pattern used in the PlacementSync ecosystem—including the end-to-end recruitment flow and interview scheduling mechanisms.
+        </div>
+        <div class="cover-meta">
+            <div class="meta-item">
+                <h4>Document Classification</h4>
+                <p>Technical Architecture Guide</p>
+            </div>
+            <div class="meta-item">
+                <h4>System Architecture</h4>
+                <p>Stateless MERN (Mongo, Express, React, Node)</p>
+            </div>
+            <div class="meta-item">
+                <h4>Target Audience</h4>
+                <p>New Developers, Code Reviewers, Viva Examiners</p>
+            </div>
+            <div class="meta-item">
+                <h4>Last Updated</h4>
+                <p>June 2026</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="toc-section">
+        <div class="toc-title">Table of Contents</div>
+        <div class="toc-list font-bold">
+            <div class="toc-item"><span class="toc-name">1. High-Level Architecture (3-Tier & Decoupling)</span><span class="toc-dots"></span><span class="toc-page">Page 3</span></div>
+            <div class="toc-item"><span class="toc-name">2. Backend Stack & Core Libraries (Express, Mongoose, JWT)</span><span class="toc-dots"></span><span class="toc-page">Page 4</span></div>
+            <div class="toc-item"><span class="toc-name">3. Frontend Stack & UI Libraries (React 19, Zustand, Query)</span><span class="toc-dots"></span><span class="toc-page">Page 6</span></div>
+            <div class="toc-item"><span class="toc-name">4. Database Schema Design & Relationships</span><span class="toc-dots"></span><span class="toc-page">Page 8</span></div>
+            <div class="toc-item"><span class="toc-name">5. Core Feature: Interview Scheduling Subsystem</span><span class="toc-dots"></span><span class="toc-page">Page 10</span></div>
+            <div class="toc-item"><span class="toc-name">6. Complete End-to-End System Workflow Trace</span><span class="toc-dots"></span><span class="toc-page">Page 11</span></div>
+            <div class="toc-item"><span class="toc-name">7. Algorithmic Implementations (NLP & Weighted Scoring)</span><span class="toc-dots"></span><span class="toc-page">Page 13</span></div>
+            <div class="toc-item"><span class="toc-name">8. Security Implementations & Route Protection</span><span class="toc-dots"></span><span class="toc-page">Page 15</span></div>
+            <div class="toc-item"><span class="toc-name">9. Architectural Design Patterns & Tradeoffs</span><span class="toc-dots"></span><span class="toc-page">Page 16</span></div>
+            <div class="toc-item"><span class="toc-name">10. Onboarding Files, Reading Order & Viva Q&A</span><span class="toc-dots"></span><span class="toc-page">Page 18</span></div>
+        </div>
+    </div>
+
+    <!-- Section 1 -->
+    <section>
+        <h1 class="section-header">1. High-Level Architecture (3-Tier & Decoupling)</h1>
+        <p>
+            PlacementSync is engineered on a <strong>decoupled client-server-database (3-Tier) architecture</strong>. 
+            This structural separation guarantees that the presentation layer (frontend), application logic layer (backend), and data storage layer (database) remain distinct, communicating only through formal interfaces (RESTful APIs and Mongoose ODM drivers).
+        </p>
+
+        <h2>Architectural Tiers</h2>
+        
+        <h3>1. Presentation Tier (Frontend Client)</h3>
+        <p>
+            Developed as a Single Page Application (SPA) using React 19 and Vite. 
+            It executes entirely within the user's web browser, managing view logic, UI routing (client-side), local session stores, and custom micro-animations. It never talks directly to the database; it accesses data by sending asynchronous HTTP requests containing JWT credentials to the API Gateway.
+        </p>
+
+        <h3>2. Logic Tier (Backend REST Server)</h3>
+        <p>
+            An Express application running on the Node.js runtime. 
+            It acts as the single point of entry for all API requests. The logic tier is fully stateless—sessions are validated via JWT tokens sent in cookies or authorization headers. It contains controllers that interpret client requests, services that enforce business rules and run algorithmic logic, and middleware functions that guard against unauthorized access.
+        </p>
+
+        <h3>3. Data Tier (Database Engine)</h3>
+        <p>
+            A MongoDB document-based database. 
+            Document-oriented storage matches the application's object structures, removing the need for complex object-relational mapping (ORM) translations. Relationships are represented either by embedding arrays of structures directly within documents (maximizing read speed) or by storing ObjectIds as pointers to other documents (preventing data duplication).
+        </p>
+
+        <div class="info-box">
+            <h4>Architect's Note: Benefits of Decoupled Architecture</h4>
+            <p>
+                By keeping these layers separate, we can update or scale any tier independently. 
+                For example, the React frontend can be completely rebuilt or hosted on a CDN (Content Delivery Network) like Vercel without requiring changes to the Node.js API logic or database structures.
+            </p>
+        </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section>
+        <h1 class="section-header">2. Backend Stack & Core Libraries</h1>
+        <p>
+            The backend handles API requests, schedules notifications, runs matching algorithms, and coordinates data migrations. 
+            Below is a detailed breakdown of each backend library and dependency used in the project:
+        </p>
+
+        <h2>Core Frameworks & Runtimes</h2>
+        
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>Node.js</span>
+                <span class="tech-badge">Runtime</span>
+            </div>
+            <p>
+                An asynchronous, event-driven JavaScript runtime built on Chrome's V8 engine. 
+                It uses a single-threaded event loop and non-blocking I/O to handle thousands of concurrent requests efficiently.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>Express.js (v4.18.2)</span>
+                <span class="tech-badge">Framework</span>
+            </div>
+            <p>
+                A minimal, unopinionated routing and middleware web framework for Node.js. 
+                It manages routing pipelines, parses incoming request bodies (via <code>express.json()</code>), and processes requests through a chain of middleware functions.
+            </p>
+        </div>
+
+        <h2>Database & Modeling</h2>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>Mongoose (v7.5.0)</span>
+                <span class="tech-badge">ODM Library</span>
+            </div>
+            <p>
+                A schema-based Object Data Modeling (ODM) library for MongoDB and Node.js. 
+                It manages MongoDB connections, enforces schemas at the application level, handles data type conversions, provides built-in validation, and offers a middleware API (hooks like <code>pre('save')</code>) for hashing passwords.
+            </p>
+        </div>
+
+        <h2>Security & Validation Libraries</h2>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>jsonwebtoken (v9.0.2)</span>
+                <span class="tech-badge">Authentication</span>
+            </div>
+            <p>
+                Enables stateless session management by signing and verifying cryptographically secure JSON Web Tokens (JWT). 
+                Once credentials match, the server signs a token using the HMAC-SHA256 algorithm and the server's private secret. The token is verified on subsequent requests to load user data without database lookups.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>bcryptjs (v2.4.3)</span>
+                <span class="tech-badge">Cryptography</span>
+            </div>
+            <p>
+                A pure-JavaScript implementation of the bcrypt password hashing function. 
+                It secures user passwords before storing them in the database. It adds a random "salt" value and hashes the password multiple times (12 rounds) to protect against brute-force and rainbow table attacks.
+            </p>
+        </div>
+
+        <h2>Helper & Utility Packages</h2>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>cookie-parser (v1.4.7)</span>
+                <span class="tech-badge">HTTP Utility</span>
+            </div>
+            <p>
+                Parses the <code>Cookie</code> header in incoming HTTP requests and populates <code>req.cookies</code>. 
+                This allows the backend to read HTTP-only session cookies containing the JWT token, which protects against Cross-Site Scripting (XSS) attacks.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>cors (v2.8.5)</span>
+                <span class="tech-badge">Security Middleware</span>
+            </div>
+            <p>
+                An Express middleware that configures Cross-Origin Resource Sharing (CORS) headers. 
+                It allows the frontend application (running on port 5173) to securely communicate with the backend API (running on port 5000) using credentials (cookies).
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>dotenv (v16.6.1)</span>
+                <span class="tech-badge">Configuration</span>
+            </div>
+            <p>
+                Loads environment variables from a local <code>.env</code> file into Node's <code>process.env</code> object. 
+                This separates application configurations (like API keys, database connection strings, and JWT secrets) from the code, preventing security leaks.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>morgan (v1.10.1)</span>
+                <span class="tech-badge">Logging</span>
+            </div>
+            <p>
+                An HTTP request logger middleware for Node.js. 
+                It formats and prints details of incoming requests (method, status code, response times) to the terminal, which simplifies debugging in development environments.
+            </p>
+        </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section>
+        <h1 class="section-header">3. Frontend Stack & UI Libraries</h1>
+        <p>
+            The frontend application is built to deliver a fast, responsive user experience. 
+            Below is an explanation of the core technologies, frameworks, and libraries used to build the client-side app:
+        </p>
+
+        <h2>Core Client Frameworks</h2>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>React 19 & React DOM (v19.2.4)</span>
+                <span class="tech-badge">UI Library</span>
+            </div>
+            <p>
+                A declarative, component-based JavaScript library for building user interfaces. 
+                React 19 manages a Virtual DOM to optimize updates and minimize direct browser rendering calls. It uses a component hierarchy to make views modular and reusable.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>Vite (v8.0.1)</span>
+                <span class="tech-badge">Build Tool</span>
+            </div>
+            <p>
+                A modern frontend build tool that leverages native ES modules in the browser. 
+                It offers extremely fast Hot Module Replacement (HMR) during development and uses Rollup to optimize assets for production.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>React Router DOM (v7.13.2)</span>
+                <span class="tech-badge">Client Routing</span>
+            </div>
+            <p>
+                Manages client-side navigation and routing. 
+                It maps browser URLs to specific React views (like dashboards, login pages, and profiles) and intercept browser transitions to prevent full page reloads, preserving state.
+            </p>
+        </div>
+
+        <h2>State Management & Syncing</h2>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>Zustand (v5.0.12)</span>
+                <span class="tech-badge">Client State Store</span>
+            </div>
+            <p>
+                A lightweight state management library. 
+                It uses a simple publish-subscribe model to manage global states (like user credentials and roles) without the boilerplate of Redux. It includes a persistence middleware (<code>persist</code>) to automatically save auth data to <code>localStorage</code>.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>React Query / @tanstack/react-query (v5.95.2)</span>
+                <span class="tech-badge">Server State Manager</span>
+            </div>
+            <p>
+                Manages asynchronous data fetching, caching, synchronization, and state updates from the server. 
+                It tracks loading, success, and error states, caches API responses, and handles background revalidations. This ensures the UI stays updated without duplicate network requests.
+            </p>
+        </div>
+
+        <h2>Animations & Data Visualization</h2>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>GSAP / GreenSock & @gsap/react (v3.14.2)</span>
+                <span class="tech-badge">Animations</span>
+            </div>
+            <p>
+                A high-performance HTML5 animation library. 
+                It handles complex CSS transitions, layout changes, and scroll-triggered animations. It uses high-performance rendering engines to keep animations smooth and responsive.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>Recharts (v3.8.1)</span>
+                <span class="tech-badge">Data Visualizations</span>
+            </div>
+            <p>
+                A chart library built with React and SVG elements. 
+                It parses backend statistics and renders interactive charts (line graphs, bar charts, and pie charts) on the analytics dashboard.
+            </p>
+        </div>
+
+        <h2>Form Handling & Styling</h2>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>React Hook Form & Zod Resolver</span>
+                <span class="tech-badge">Forms & Type Safety</span>
+            </div>
+            <p>
+                Performs client-side form validation. 
+                <code>react-hook-form</code> minimizes re-renders by tracking inputs directly, and <code>zod</code> parses form data against a schema to check inputs before they are sent to the backend.
+            </p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-card-title">
+                <span>Tailwind CSS & Autoprefixer</span>
+                <span class="tech-badge">Styling Framework</span>
+            </div>
+            <p>
+                A utility-first CSS framework. 
+                It enables rapid UI development directly in React components using responsive styles. It is bundled with Autoprefixer to ensure CSS compatibility across different web browsers.
+            </p>
+        </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section>
+        <h1 class="section-header">4. Database Schema Design & Relationships</h1>
+        <p>
+            The database is built on MongoDB, a document-based NoSQL database. 
+            Mongoose enforces types and handles data validation. Below is a detailed breakdown of the collection schemas and how relationships are modeled:
+        </p>
+
+        <h2>Collection Design & Schemas</h2>
+
+        <h3>1. Student Collection (<code>students</code>)</h3>
+        <p>
+            Stores active, unplaced candidates. 
+            It contains the candidate's credentials, branch, CGPA, and an array of skills.
+        </p>
+        <pre>
+const studentSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    password: { type: String, required: true, select: false },
+    usn: { type: String, required: true, unique: true, uppercase: true },
+    phone: String,
+    branch: String,
+    cgpa: { type: Number, default: 0 },
+    skills: [{ type: String, required: true }],
+    backlogs: { type: Boolean, default: false },
+    resume: String,
+    placementStatus: { type: String, enum: ['NOT_PLACED', 'PLACED'], default: 'NOT_PLACED' },
+    applications: [{
+        companyId: { type: mongoose.Schema.Types.ObjectId, required: true },
+        appliedAt: { type: Date, default: Date.now },
+        status: { type: String, enum: ['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED', 'SELECTED', 'REJECTED'], default: 'APPLIED' }
+    }],
+    eligibleCompanies: [{ type: mongoose.Schema.Types.ObjectId }]
+}, { timestamps: true });
+        </pre>
+
+        <h3>2. Placement Department Collection (<code>placementDept</code>)</h3>
+        <p>
+            A single-document collection. It contains the administrator's credentials and embeds an array of <code>companies</code>. 
+            Each company posting has embedded sub-document arrays for both <code>applicants</code> and <code>feedbacks</code>.
+        </p>
+        <pre>
+const placementDeptSchema = new mongoose.Schema({
+    adminDetails: {
+        name: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
+        phone: String,
+        password: { type: String, required: true, select: false },
+        role: { type: String, default: 'admin' }
+    },
+    companies: [{
+        companyName: { type: String, required: true },
+        role: String,
+        jdSkills: [String],
+        cgpaCriteria: Number,
+        backlog: Boolean,
+        branchesAllowed: [String],
+        numberOfCandidates: Number,
+        visitDate: Date,
+        applicationDeadline: { type: Date, required: function() { return this.isNew; } },
+        alertTriggered: { type: Boolean, default: false },
+        description: String,
+        anonymousMode: { type: Boolean, default: false },
+        applicants: [{
+            studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
+            matchedSkillsCount: Number,
+            resume: String,
+            status: { type: String, enum: ['APPLIED', 'INTERVIEW_SCHEDULED', 'COMPLETED', 'SELECTED', 'REJECTED'], default: 'APPLIED' },
+            appliedAt: { type: Date, default: Date.now }
+        }],
+        selectedStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+        feedbacks: [{
+            alumniId: { type: mongoose.Schema.Types.ObjectId, ref: 'Alumni', required: true },
+            message: String,
+            rating: { type: Number, min: 1, max: 5 },
+            createdAt: { type: Date, default: Date.now }
+        }]
+    }]
+}, { timestamps: true });
+        </pre>
+
+        <h3>3. Placed Alumni Collection (<code>alumni</code>)</h3>
+        <p>Holds candidates transitioned from active lists upon final selection.</p>
+
+        <h3>4. Interview Collection (<code>interviews</code>)</h3>
+        <p>Stores detailed metrics for scheduled slots.</p>
+        <pre>
+const interviewSchema = new mongoose.Schema({
+    studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
+    companyId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    date: { type: Date, required: true },
+    time: { type: String, required: true },
+    mode: { type: String, enum: ['online', 'offline'], required: true },
+    meetingLink: String,
+    location: String,
+    status: { type: String, enum: ['scheduled', 'completed', 'selected', 'rejected'], default: 'scheduled' }
+}, { timestamps: true });
+        </pre>
+
+        <h2>Relational Strategies & Indexes</h2>
+        <ul>
+            <li><strong>Embedded Arrays (One-to-Many)</strong>: Applications are embedded inside the <code>Student</code> document, and recruiter drives are embedded inside the <code>PlacementDept</code> document. This allows the system to retrieve related data in a single database read, avoiding costly JOIN operations.</li>
+            <li><strong>Referential Keys (One-to-One / Many-to-Many)</strong>: Points are stored as <code>mongoose.Schema.Types.ObjectId</code> references (like the link between <code>Interview</code> and <code>Student</code>) where embedding would cause document size limits (16MB) to be exceeded or result in stale data.</li>
+            <li><strong>Performance Indexes</strong>:
+                To keep query response times fast, we define database indexes on frequently queried fields:
+                <ul>
+                    <li><code>studentSchema.index({ placementStatus: 1 })</code>: Optimizes dashboard queries when filtering candidates.</li>
+                    <li><code>studentSchema.index({ branch: 1, cgpa: -1 })</code>: Speeds up company eligibility checks.</li>
+                    <li><code>studentSchema.index({ skills: 1 })</code>: Accelerates skill similarity match calculations.</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <!-- Section 5 -->
+    <section>
+        <h1 class="section-header">5. Core Feature: Interview Scheduling Subsystem</h1>
+        <p><strong>Problem Solved</strong>: Organizing interviews manually is error-prone, leading to double-bookings, lost link details, and manual update delays.</p>
+        <p><strong>Solution</strong>: An integrated Interview Scheduling Subsystem that manages bookings, updates statuses across documents, and links directly to student dashboards.</p>
+        <p><strong>Technical Mechanics</strong>:
+            When an admin assigns an interview slot, the server creates a new document in the <code>Interview</code> collection. In a transaction-like sequence, it also updates the status to <code>INTERVIEW_SCHEDULED</code> in both the <code>Student</code> document and the company's applicant subdocument.
+        </p>
+
+        <h2>Key Code Block Trace (Interview Allocation)</h2>
+        <p>Implemented in <code>backend/src/controllers/interviewController.js</code>:</p>
+        <pre>
+exports.assignInterview = catchAsync(async (req, res, next) => {
+    const { studentId, companyId, date, time, mode, meetingLink, location } = req.body;
+
+    // 1. Verify student has actually applied
+    const student = await Student.findById(studentId);
+    if (!student) return next(new AppError('Student not found', 404));
+
+    const application = student.applications.find(app => app.companyId.toString() === companyId);
+    if (!application) return next(new AppError('Student has not applied to this company', 400));
+
+    // 2. Prevent overlapping interviews
+    const existing = await Interview.findOne({ studentId, companyId, status: 'scheduled' });
+    if (existing) return next(new AppError('An active interview is already scheduled.', 400));
+
+    // 3. Create Interview Document
+    const newInterview = await Interview.create({
+        studentId, companyId, date, time, mode, meetingLink, location, status: 'scheduled'
+    });
+
+    // 4. Update status in Student collection
+    await Student.updateOne(
+        { _id: studentId, 'applications.companyId': companyId },
+        { $set: { 'applications.$.status': 'INTERVIEW_SCHEDULED' } }
+    );
+
+    // 5. Update status in PlacementDept embedded company applicants array
+    await PlacementDept.updateOne(
+        { 'companies._id': companyId, 'companies.applicants.studentId': studentId },
+        { $set: { 'companies.$[comp].applicants.$[app].status': 'INTERVIEW_SCHEDULED' } },
+        { arrayFilters: [{ 'comp._id': companyId }, { 'app.studentId': studentId }] }
+    );
+
+    res.status(201).json({ status: 'success', data: { interview: newInterview } });
+});
+        </pre>
+
+        <h2>Frontend Integration</h2>
+        <p>
+            The admin accesses the <strong>Selection Center</strong> screen. Under "Applied" applicants, clicking **Assign Interview** triggers a modal to input the date, time, mode (online/offline), and meeting link/location.
+            This fires the <code>useAssignInterview</code> mutation hook, which calls the backend endpoint.
+            On the candidate side, <code>StudentDashboard.jsx</code> fetches the updated interview array and displays dates, times, and meeting links with a virtual "Join Meeting" button.
+        </p>
+    </section>
+
+    <!-- Section 6 -->
+    <section>
+        <h1 class="section-header">6. Complete End-to-End System Workflow Trace</h1>
+        <p>
+            Below is the complete flow of the PlacementSync system, tracing data movements and actions from project setup to final selection and alumni reviews:
+        </p>
+
+        <h2>Step-by-Step System Flow</h2>
+
+        <h3>Step 1: Admin Adds a Company Drive</h3>
+        <p>
+            The placement admin fills out a company form (defining name, role, required skills, minimum CGPA, backlog gate, allowed branches, and deadline date).
+            This POST request goes to <code>/api/placement/companies</code>, calling <code>placementDeptController.addCompany</code>.
+        </p>
+
+        <h3>Step 2: Broker Auto-Matches Candidates</h3>
+        <p>
+            Inside <code>addCompany</code>, the server calls <code>matchingService.matchStudentsToCompany(newCompany)</code>. 
+            The service scans the <code>Student</code> collection for unplaced students. If they pass the branch, backlog, and CGPA requirements, the company's ObjectId is added to their <code>eligibleCompanies</code> array, and they receive an automated email alert via <code>emailService.js</code>.
+        </p>
+
+        <h3>Step 3: Student Learns Missing Skills</h3>
+        <p>
+            The student opens their dashboard. The UI renders the matched companies. 
+            The student clicks **View Eligibility** to open the eligibility modal. 
+            This calls <code>studentController.getCompanyEligibility</code> $\rightarrow$ <code>eligibilityService.evaluateStudentEligibility</code>. 
+            If the student is missing skills, <code>courseService.js</code> fetches tutorial courses from the YouTube API (or cache) and displays them as clickable learning cards on the student's dashboard.
+        </p>
+
+        <h3>Step 4: Student Submits Application</h3>
+        <p>
+            The student clicks **Apply** on their dashboard. 
+            This triggers a POST to <code>/api/student/companies/:companyId/apply</code> $\rightarrow$ <code>studentController.applyToCompany</code>. 
+            The backend validates the student's eligibility, pushes the application record into the student's <code>applications</code> array, and adds the applicant details to the company's embedded <code>applicants</code> array.
+        </p>
+
+        <h3>Step 5: Admin Evaluates Candidates (Anonymous Mode & NLP Matching)</h3>
+        <p>
+            The admin opens the Selection Center. 
+            This calls <code>placementDeptController.getCompanyApplicants</code>. 
+            The server calculates the semantic similarity score between the student's skills and the job description using the Jaro-Winkler algorithm. 
+            If <code>anonymousMode</code> is enabled for the company, the candidate's personal details (name, email, phone, USN) are obfuscated before the list is sent to the client.
+        </p>
+
+        <h3>Step 6: Admin Schedules Interview</h3>
+        <p>
+            The admin clicks **Assign Interview** for a candidate. 
+            This calls <code>interviewController.assignInterview</code>, creating a document in the <code>Interview</code> collection and updating the status to <code>INTERVIEW_SCHEDULED</code> across the system.
+        </p>
+
+        <h3>Step 7: Admin Marks Interview as Completed</h3>
+        <p>
+            Once the interview is finished, the admin clicks **Mark Completed**. 
+            This updates the interview status in the database to <code>completed</code>. The student's application status updates to <code>COMPLETED</code>, which flags them in the admin dashboard for final placement decision.
+        </p>
+
+        <h3>Step 8: Admin Places or Rejects Candidate</h3>
+        <p>
+            The admin has two options for processed candidates:
+        </p>
+        <ul>
+            <li><strong>Place</strong>: Clicking **Place** triggers <code>placementDeptController.selectStudents</code>. This marks the applicant as placed, creates a new record in the <code>Alumni</code> collection, copies their profile and credentials, deletes their active record from the <code>Student</code> collection, and sends a congratulations email.</li>
+            <li><strong>Reject</strong>: Clicking **Reject** triggers <code>placementDeptController.rejectStudents</code>. This updates the applicant's status to <code>REJECTED</code> in the drive and the student document, and sends a rejection email.</li>
+        </ul>
+
+        <h3>Step 9: Background Cron Notification Alerts</h3>
+        <p>
+            Every 5 minutes, <code>cronService.js</code> checks for company drives with application deadlines expiring in less than 1 hour. It finds eligible students who haven't applied yet and dispatches urgent warning emails.
+        </p>
+
+        <h3>Step 10: Alumni Network & Feedback Loop</h3>
+        <p>
+            Placed students can log into their dashboard as Alumni. 
+            They can use the Alumni Portal to search for classmates and view colleagues' contact details. 
+            They can also submit rating reviews and interview feedback for the company they joined, which is nested under the company's <code>feedbacks</code> array for current students to read.
+        </p>
+    </section>
+
+    <!-- Section 7 -->
+    <section>
+        <h1 class="section-header">7. Algorithmic Implementations</h1>
+        <p>
+            PlacementSync uses custom backend algorithms to automate skill matching and calculate profile compatibility scores:
+        </p>
+
+        <h2>A. Jaro-Winkler Semantic Similarity Matcher</h2>
+        <p>
+            Simple string comparisons fail when candidates use slight variations of terms (e.g., "NodeJS" and "Node"). 
+            The Jaro-Winkler algorithm measures character substitutions and transpositions to determine how closely two terms align.
+        </p>
+        <p>
+            It is calculated as:
+            $$d_j = \frac{1}{3} \left( \frac{m}{|s_1|} + \frac{m}{|s_2|} + \frac{m-t}{m} \right)$$
+            Where $m$ is the number of matching characters, $|s_i|$ is the string lengths, and $t$ is the number of transpositions. Jaro-Winkler scales this score based on the length of matching prefixes:
+            $$d_w = d_j + \ell p (1 - d_j)$$
+            Where $\ell$ is the prefix overlap length and $p$ is a constant scaling factor (typically 0.1).
+        </p>
+        <p>
+            Our implementation in <code>similarityService.js</code> loops through each skill in the job description, finds the highest Jaro-Winkler similarity score against the candidate's skills, and aggregates these values to compute a combined matching percentage.
+        </p>
+
+        <h2>B. Profile Eligibility Weighting Formula</h2>
+        <p>
+            The compatibility engine splits score calculations into two categories:
+        </p>
+        <ul>
+            <li><strong>Hard Gate Filters</strong>: If the company limits applications by branch (e.g., computer science only) or backlog constraints (no active backlogs allowed), and the candidate fails to meet these criteria, their eligibility is set to false immediately.</li>
+            <li><strong>Weighted Scores</strong>: If the hard gates pass, the system calculates a compatibility percentage:
+                <ul>
+                    <li><strong>CGPA (60% weight)</strong>: If the candidate's CGPA is greater than or equal to the requirement, they receive the full 60 points. If it is slightly lower, they receive a proportional score:
+                        $$\text{Score}_{\text{CGPA}} = \left( \frac{\text{Student CGPA}}{\text{Required CGPA}} \right) \times 60$$
+                    </li>
+                    <li><strong>Skills Overlap (40% weight)</strong>: Calculated as the percentage of required skills matched:
+                        $$\text{Score}_{\text{Skills}} = \left( \frac{\text{Matched Skills Count}}{\text{Required Skills Count}} \right) \times 40$$
+                    </li>
+                </ul>
+                The final compatibility score is calculated as:
+                $$\text{Score}_{\text{Total}} = \text{Score}_{\text{CGPA}} + \text{Score}_{\text{Skills}}$$
+            </li>
+        </ul>
+    </section>
+
+    <!-- Section 8 -->
+    <section>
+        <h1 class="section-header">8. Security Implementations & Route Protection</h1>
+        <p>
+            Security is built into the backend to protect sensitive student records and administrator controls.
+        </p>
+
+        <h2>Authentication Architecture</h2>
+        <ul>
+            <li><strong>Stateless Sessions</strong>: Authentication uses stateless JSON Web Tokens (JWT) rather than server-side session stores, allowing the backend to remain stateless and scale efficiently.</li>
+            <li><strong>Password Cryptography</strong>: 
+                Passwords are hashed using <code>bcryptjs</code> with a work factor cost of 12. 
+                Passwords are never stored in plain text, protecting credentials even in the event of a database compromise. The field is configured with <code>select: false</code> to prevent credentials from being exposed in standard query results.
+            </li>
+            <li><strong>HTTP-only Cookies</strong>: 
+                The JWT is returned in a cookie configured with the <code>httpOnly</code> flag. 
+                This prevents client-side scripts (like JavaScript) from reading the token, protecting sessions from Cross-Site Scripting (XSS) attacks.
+            </li>
+        </ul>
+
+        <h2>Route Authorization Pipeline</h2>
+        <p>
+            Incoming requests are checked by middleware layers before reaching controller functions:
+        </p>
+        <pre>
+[Incoming Request]
+        │
+        ▼
+[auth.protect Middleware] 
+  - Extracts JWT token from Cookie or Bearer header.
+  - Verifies token signature using JWT_SECRET.
+  - Decodes user ID and checks DB to verify the user exists.
+  - Attaches user record to req.user.
+        │
+        ▼
+[role.restrictTo('admin') Middleware]
+  - Compares the role field in req.user.role with allowed roles.
+  - Throws HTTP 403 error if roles do not match.
+        │
+        ▼
+[Route Controller Handler]
+  - Executes request logic.
+        </pre>
+    </section>
+
+    <!-- Section 9 -->
+    <section>
+        <h1 class="section-header">9. Architectural Design Patterns & Tradeoffs</h1>
+        <p>
+            PlacementSync uses established software design patterns to structure its codebase. 
+            Below is an explanation of the design patterns used, and the tradeoffs associated with our architectural decisions:
+        </p>
+
+        <h2>Design Patterns</h2>
+        <ul>
+            <li><strong>Layered MVC (Model-View-Controller) Architecture</strong>: 
+                Divides logic into distinct layers. 
+                Routers define API paths, controllers process request arguments and format responses, and services manage domain operations and database models.
+            </li>
+            <li><strong>Adapter Pattern</strong>: 
+                Implemented in the course recommendations integration. 
+                The service translates dynamic YouTube video responses or scraper outputs into a consistent, unified JSON format, protecting client views from changes in external API structures.
+            </li>
+            <li><strong>Publish-Subscribe Pattern</strong>: 
+                Zustand manages client state using state subscriptions. 
+                React components subscribe to specific fields in the store and re-render only when those specific fields change, improving rendering performance.
+            </li>
+        </ul>
+
+        <h2>System Tradeoffs</h2>
+        
+        <div class="info-box">
+            <h4>Tradeoff: Nested Recruiter Drives in PlacementDept</h4>
+            <p>
+                Company drives and job listings are stored as embedded documents within the <code>PlacementDept</code> collection rather than using a separate, referenced collection.
+            </p>
+            <ul>
+                <li><strong>Tradeoff Analysis</strong>: 
+                    Embedded models allow the system to load admin dashboards and candidate lists in a single database read, avoiding JOIN operations. 
+                    However, MongoDB enforces a 16MB limit on individual documents. If the college lists thousands of companies over time, the document could exceed the limit, causing database errors.
+                </li>
+                <li><strong>Mitigation Strategy</strong>: 
+                    As the system grows, refactor the schema to store companies in a standalone collection, referencing the department ID via ObjectIds.
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section 10 -->
+    <section>
+        <h1 class="section-header">10. Onboarding Guide & Interview Cheat Sheet</h1>
+        
+        <h2>Top 10 Files to Read First</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Layer</th>
+                    <th>Core Concept to Study</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>backend/src/models/Student.js</code></td>
+                    <td>Model</td>
+                    <td>Student profiles and pre-save hooks.</td>
+                </tr>
+                <tr>
+                    <td><code>backend/src/models/PlacementDept.js</code></td>
+                    <td>Model</td>
+                    <td>Admin schemas and embedded company subdocuments.</td>
+                </tr>
+                <tr>
+                    <td><code>backend/src/middleware/auth.js</code></td>
+                    <td>Middleware</td>
+                    <td>JWT authentication checks and user context loading.</td>
+                </tr>
+                <tr>
+                    <td><code>backend/src/services/similarityService.js</code></td>
+                    <td>Service</td>
+                    <td>Skill similarity matching using Jaro-Winkler.</td>
+                </tr>
+                <tr>
+                    <td><code>backend/src/services/eligibilityService.js</code></td>
+                    <td>Service</td>
+                    <td>Composite CGPA/skill scores and course recommendations.</td>
+                </tr>
+                <tr>
+                    <td><code>backend/src/controllers/placementDeptController.js</code></td>
+                    <td>Controller</td>
+                    <td>Drives, blind screening obfuscation, and selection pipelines.</td>
+                </tr>
+                <tr>
+                    <td><code>frontend/src/routes/index.jsx</code></td>
+                    <td>Routing</td>
+                    <td>Client-side route configurations and RoleGuard barriers.</td>
+                </tr>
+                <tr>
+                    <td><code>frontend/src/features/auth/store/authStore.js</code></td>
+                    <td>State</td>
+                    <td>Zustand store managing authentication state.</td>
+                </tr>
+                <tr>
+                    <td><code>frontend/src/features/student/pages/StudentDashboard.jsx</code></td>
+                    <td>UI View</td>
+                    <td>Dashboard rendering, hooks, and GSAP animations.</td>
+                </tr>
+                <tr>
+                    <td><code>frontend/src/features/analytics/pages/AnalyticsDashboard.jsx</code></td>
+                    <td>UI View</td>
+                    <td>Displaying placement statistics using Recharts.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Viva & Technical Interview Q&A</h2>
+        
+        <div class="success-box">
+            <h4>Q1: Why does the system clone placed students to the Alumni collection and delete their record from the Student collection?</h4>
+            <p><strong>Answer</strong>: This keeps the active <code>Student</code> collection small, which improves database query and indexing performance. It also separates active candidates from placed alumni, simplifying dashboard queries.</p>
+        </div>
+
+        <div class="success-box">
+            <h4>Q2: What is Jaro-Winkler Distance, and how does the system use it for skill matching?</h4>
+            <p><strong>Answer</strong>: Jaro-Winkler is a string similarity metric that measures the edit distance between two strings, giving higher scores to prefix alignments. The system uses the <code>natural</code> library to compare student skills with job descriptions, ensuring variations like "React" and "ReactJS" are matched successfully.</p>
+        </div>
+
+        <div class="success-box">
+            <h4>Q3: Explain the security benefits of using HTTP-only cookies to store session JWTs.</h4>
+            <p><strong>Answer</strong>: HTTP-only cookies cannot be read by client-side JavaScript. This protects the token from being accessed during Cross-Site Scripting (XSS) attacks, securing the user session.</p>
+        </div>
+
+        <div class="success-box">
+            <h4>Q4: How does the upskilling recommender handle rate-limiting or network issues during course lookups?</h4>
+            <p><strong>Answer</strong>: The service implements a caching and fallback pipeline. It first checks the local MongoDB cache. On a cache miss, it queries the YouTube API. If the key is missing or rate-limited, it falls back to screen scraping via <code>youtube-search-api</code>, and defaults to a general Google search if both fail.</p>
+        </div>
+    </section>
+
+</div>
+
+</body>
+</html>

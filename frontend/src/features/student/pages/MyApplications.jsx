@@ -28,6 +28,8 @@ const MyApplications = () => {
     switch(status) {
       case 'SELECTED': return { color: 'text-emerald-400', icon: CheckCircle2, bg: 'bg-emerald-500/10 hover:bg-emerald-500/20', border: 'border-emerald-500/30' };
       case 'REJECTED': return { color: 'text-rose-400', icon: XCircle, bg: 'bg-rose-500/10 hover:bg-rose-500/20', border: 'border-rose-500/30' };
+      case 'CLOSED':
+      case 'POSITION_FILLED': return { color: 'text-neutral-400', icon: XCircle, bg: 'bg-neutral-500/10 hover:bg-neutral-500/20', border: 'border-neutral-500/30' };
       default: return { color: 'text-indigo-400', icon: Clock, bg: 'bg-indigo-500/10 hover:bg-indigo-500/20', border: 'border-indigo-500/30' };
     }
   }
