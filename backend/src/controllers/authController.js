@@ -121,6 +121,7 @@ exports.login = catchAsync(async (req, res, next) => {
  */
 
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const Student = require('../models/Student');
 const PlacementDept = require('../models/PlacementDept');
 const Alumni = require('../models/Alumni');
@@ -329,3 +330,97 @@ exports.restrictTo = (...roles) => {
         next();
     };
 };
+
+// 🔹 FORGOT PASSWORD
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+    const { email, role } = req.body;
+
+    if (!email || !role) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please provide both email and role.'
+        });
+    }
+
+    let user;
+    if (role === 'admin') {
+        user = await PlacementDept.findOne({ 'adminDetails.email': email });
+    } else if (role === 'alumni') {
+        user = await Alumni.findOne({ 'studentData.email': email });
+    } else if (role === 'student') {
+        user = await Student.findOne({ email });
+    } else {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid role provided.'
+        });
+    }
+
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: 'No account found with this email.'
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        userExists: true
+    });
+});
+
+// 🔹 RESET PASSWORD
+exports.resetPassword = catchAsync(async (req, res, next) => {
+    const { email, role, newPassword } = req.body;
+
+    if (!email || !role || !newPassword) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please provide email, role and new password.'
+        });
+    }
+
+    if (role === 'admin') {
+        const dept = await PlacementDept.findOne({ 'adminDetails.email': email }).select('+adminDetails.password');
+        if (!dept) {
+            return res.status(404).json({
+                success: false,
+                message: 'No account found with this email.'
+            });
+        }
+        dept.adminDetails.password = newPassword;
+        dept.markModified('adminDetails.password');
+        await dept.save();
+    } else if (role === 'alumni') {
+        const alumni = await Alumni.findOne({ 'studentData.email': email }).select('+password');
+        if (!alumni) {
+            return res.status(404).json({
+                success: false,
+                message: 'No account found with this email.'
+            });
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+        alumni.password = hashedPassword;
+        await alumni.save();
+    } else if (role === 'student') {
+        const student = await Student.findOne({ email }).select('+password');
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: 'No account found with this email.'
+            });
+        }
+        student.password = newPassword;
+        await student.save();
+    } else {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid role provided.'
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: 'Password updated successfully.'
+    });
+});

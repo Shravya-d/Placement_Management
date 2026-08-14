@@ -90,9 +90,9 @@ exports.evaluateStudentEligibility = async (student, company, skipCourseFetch = 
     if (studentCgpa < requiredCgpa) {
         reasons.push("CGPA below required minimum");
     }
-    if (jdSkills.length > 0 && skillMatchScore < 0.50) {
+    if (jdSkills.length > 0 && skillMatchScore < 0.20) {
         const currentPercentage = Math.round(skillMatchScore * 100);
-        reasons.push(`Skill Match: ${currentPercentage}% (Minimum Required: 50%)`);
+        reasons.push(`Skill Match: ${currentPercentage}% (Minimum Required: 20%)`);
     }
 
     const isEligible = branchEligible && backlogEligible && (studentCgpa >= requiredCgpa) && (skillMatchScore >= 0.20 || jdSkills.length === 0);

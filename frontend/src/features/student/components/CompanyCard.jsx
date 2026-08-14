@@ -73,15 +73,15 @@ const CompanyCard = ({ company, onClickFeedback, onClickEligibility }) => {
           <span>{company.cgpaCriteria ? `Requires ${company.cgpaCriteria} CGPA min` : 'No CGPA Constraint'}</span>
         </div>
         {deadlineDate && (
-           <div className="flex items-center text-sm">
-             <Clock className={cn("w-4 h-4 mr-2", isExpired ? "text-accent-red" : "text-sky-400")} />
-             <span className={isExpired ? "text-accent-red font-semibold" : "text-neutral-300"}>
-               {isExpired ? "Closed exactly on " : "Closes: "} 
-               {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(deadlineDate)}
-             </span>
-           </div>
+          <div className="flex items-center text-sm">
+            <Clock className={cn("w-4 h-4 mr-2", isExpired ? "text-accent-red" : "text-sky-400")} />
+            <span className={isExpired ? "text-accent-red font-semibold" : "text-neutral-300"}>
+              {isExpired ? "Closed exactly on " : "Closes: "}
+              {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(deadlineDate)}
+            </span>
+          </div>
         )}
-        
+
         {company.matchedSkills && company.matchedSkills.length > 0 ? (
           <div className="pt-3">
             <p className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold mb-1">Matched Skills</p>
@@ -136,28 +136,28 @@ const CompanyCard = ({ company, onClickFeedback, onClickEligibility }) => {
 
       <div className="flex items-center space-x-3 pt-4 border-t border-neutral-700/50">
         <button onClick={() => onClickEligibility(company._id)} className="flex-1 h-11 rounded-2xl bg-surface border border-brand-violet/30 text-brand-violet text-sm font-medium hover:bg-brand-violet/10 interactive flex items-center justify-center transition-all">
-          AI Match
+          Match
         </button>
         <button onClick={() => onClickFeedback(company._id)} className="flex-1 h-11 rounded-2xl bg-surface border border-neutral-700/50 text-light text-sm font-medium hover:bg-light/5 interactive flex items-center justify-center transition-all">
           Reviews
         </button>
         {company.status === 'FILLED' ? (
-           <button disabled className="flex-1 h-11 rounded-2xl bg-accent-red/10 text-accent-red border border-accent-red/20 text-sm font-medium transition-all flex items-center justify-center cursor-not-allowed">
-             Positions Filled
-           </button>
+          <button disabled className="flex-1 h-11 rounded-2xl bg-accent-red/10 text-accent-red border border-accent-red/20 text-sm font-medium transition-all flex items-center justify-center cursor-not-allowed">
+            Positions Filled
+          </button>
         ) : company.status === 'CLOSED' ? (
-           <button disabled className="flex-1 h-11 rounded-2xl bg-accent-red/10 text-accent-red border border-accent-red/20 text-sm font-medium transition-all flex items-center justify-center cursor-not-allowed">
-             Closed
-           </button>
+          <button disabled className="flex-1 h-11 rounded-2xl bg-accent-red/10 text-accent-red border border-accent-red/20 text-sm font-medium transition-all flex items-center justify-center cursor-not-allowed">
+            Closed
+          </button>
         ) : hasApplied ? (
-           <button disabled className="flex-1 h-11 rounded-2xl bg-accent-teal/10 text-accent-teal border border-accent-teal/20 text-sm font-medium transition-all flex items-center justify-center">
-             Applied
-           </button>
+          <button disabled className="flex-1 h-11 rounded-2xl bg-accent-teal/10 text-accent-teal border border-accent-teal/20 text-sm font-medium transition-all flex items-center justify-center">
+            Applied
+          </button>
         ) : isExpired ? (
-           <button disabled className="flex-1 h-11 rounded-2xl bg-accent-red/10 text-accent-red border border-accent-red/20 text-sm font-medium transition-all flex items-center justify-center cursor-not-allowed">
-             <AlertCircle className="w-4 h-4 mr-2" />
-             Closed
-           </button>
+          <button disabled className="flex-1 h-11 rounded-2xl bg-accent-red/10 text-accent-red border border-accent-red/20 text-sm font-medium transition-all flex items-center justify-center cursor-not-allowed">
+            <AlertCircle className="w-4 h-4 mr-2" />
+            Closed
+          </button>
         ) : (
           <button onClick={handleApply} disabled={!isEligible || isPending} className={cn("flex-1 h-11 rounded-2xl text-sm font-bold transition-all flex items-center justify-center interactive", !isEligible ? "bg-surface border border-neutral-700/50 text-neutral-500 cursor-not-allowed opacity-80" : "bg-gradient-to-r from-brand-violet to-indigo-600 text-light shadow-glow hover:shadow-glow-lg", isPending && "opacity-70")}>
             {isPending ? 'Applying...' : 'Apply Now'}

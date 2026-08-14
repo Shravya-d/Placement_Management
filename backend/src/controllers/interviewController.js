@@ -70,6 +70,14 @@ exports.assignInterview = catchAsync(async (req, res, next) => {
         }
     );
 
+    // 5. Send Email Notification
+    try {
+        const emailService = require('../services/emailService');
+        await emailService.sendInterviewScheduledEmail(student, company.companyName);
+    } catch (emailErr) {
+        console.error('Error sending interview scheduled email:', emailErr);
+    }
+
     res.status(201).json({
         status: 'success',
         data: {

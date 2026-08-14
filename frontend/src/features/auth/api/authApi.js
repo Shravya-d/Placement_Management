@@ -13,5 +13,13 @@ export const authApi = {
   registerAdmin: async (data) => {
     const response = await axiosInstance.post('/auth/register-admin', data);
     return response.data;
+  },
+  forgotPassword: async (data) => {
+    const response = await axiosInstance.post('/auth/forgot-password', data);
+    return response.data;
+  },
+  resetPassword: async (data) => {
+    const response = await axiosInstance.post('/auth/reset-password', data);
+    return response.data;
   }
 };
